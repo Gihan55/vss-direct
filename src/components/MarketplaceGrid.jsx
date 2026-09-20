@@ -16,6 +16,10 @@ export const MarketplaceGrid = () => {
     setSelectedListingType,
     onlyVerified,
     setOnlyVerified,
+    selectedDistrict,
+    setSelectedDistrict,
+    selectedCity,
+    setSelectedCity,
     sponsorAds,
     setIsLoanModalOpen
   } = useApp();
@@ -23,6 +27,15 @@ export const MarketplaceGrid = () => {
   // Distinct makes & body types for filters
   const makes = ['all', ...new Set(vehicles.map(v => v.make))];
   const bodyTypes = ['all', ...new Set(vehicles.map(v => v.bodyType))];
+
+  // Location helpers — new listings carry specs.district/city; older rows may
+  // only have the free-text "City / District" location string, so fall back.
+  const districtOf = v => v.specs?.district || (v.location || '').split('/').pop()?.trim() || '';
+  const cityOf = v => v.specs?.city || (v.location || '').split('/')[0]?.trim() || '';
+  const districts = ['all', ...new Set(vehicles.filter(v => v.status === 'active').map(districtOf).filter(Boolean))].sort((a, b) => a === 'all' ? -1 : b === 'all' ? 1 : a.localeCompare(b));
+  const cities = ['all', ...new Set(vehicles
+    .filter(v => v.status === 'active' && (selectedDistrict === 'all' || districtOf(v) === selectedDistrict))
+    .map(cityOf).filter(Boolean))];
 
   // Filter vehicles
   const filteredVehicles = vehicles.filter(v => {
@@ -34,6 +47,9 @@ export const MarketplaceGrid = () => {
     if (selectedMake !== 'all' && v.make.toLowerCase() !== selectedMake.toLowerCase()) return false;
     if (selectedBodyType !== 'all' && v.bodyType.toLowerCase() !== selectedBodyType.toLowerCase()) return false;
     if (selectedListingType !== 'all' && v.listingType !== selectedListingType) return false;
+
+    if (selectedDistrict !== 'all' && districtOf(v) !== selectedDistrict) return false;
+    if (selectedCity !== 'all' && cityOf(v) !== selectedCity) return false;
 
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
@@ -113,6 +129,30 @@ export const MarketplaceGrid = () => {
               <option value="all">All Body Types</option>
               {bodyTypes.filter(b => b !== 'all').map(b => (
                 <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+
+            {/* District Filter */}
+            <select 
+              className="filter-select"
+              value={selectedDistrict}
+              onChange={(e) => { setSelectedDistrict(e.target.value); setSelectedCity('all'); }}
+            >
+              <option value="all">All Districts</option>
+              {districts.filter(d => d !== 'all').map(district => (
+                <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+
+            {/* City Filter */}
+            <select 
+              className="filter-select"
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+            >
+              <option value="all">All Cities</option>
+              {cities.filter(c => c !== 'all').map(city => (
+                <option key={city} value={city}>{city}</option>
               ))}
             </select>
 

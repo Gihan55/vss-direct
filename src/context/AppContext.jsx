@@ -190,16 +190,17 @@ export const AppProvider = ({ children }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // ------------------------------------------------------------------
-  // Visual theme. Two skins ship with the app:
+  // Visual theme. Three skins ship with the app:
   //   'nikoba'   — light, white + indigo marketplace look (default)
   //   'vss-dark' — the original dark glassmorphism UI (2nd option)
+  //   'racing'   — carbon-black + racing-red motorsport look (3rd option)
   // The choice is persisted and mirrored onto <html data-theme="..."> so the
   // whole CSS-variable design system re-skins without touching components.
   // ------------------------------------------------------------------
   const [theme, setTheme] = useState(() => {
     try {
       const saved = localStorage.getItem('vss_theme');
-      return saved === 'vss-dark' || saved === 'nikoba' ? saved : 'nikoba';
+      return saved === 'vss-dark' || saved === 'racing' || saved === 'nikoba' ? saved : 'nikoba';
     } catch (e) {
       return 'nikoba';
     }
@@ -210,7 +211,8 @@ export const AppProvider = ({ children }) => {
     try { localStorage.setItem('vss_theme', theme); } catch (e) {}
   }, [theme]);
 
-  const toggleTheme = () => setTheme(t => (t === 'nikoba' ? 'vss-dark' : 'nikoba'));
+  // Cycle order matches the header switcher: light → dark → racing → light.
+  const toggleTheme = () => setTheme(t => (t === 'nikoba' ? 'vss-dark' : t === 'vss-dark' ? 'racing' : 'nikoba'));
 
   // Active role is derived from the validated user above so the two can never
   // disagree in the offline path; in DB mode the auth effect sets both.
@@ -233,6 +235,10 @@ export const AppProvider = ({ children }) => {
   const [selectedBodyType, setSelectedBodyType] = useState('all');
   const [selectedListingType, setSelectedListingType] = useState('all');
   const [onlyVerified, setOnlyVerified] = useState(true);
+  // Location narrowing — district is the primary pool; the city list is
+  // derived from the live catalogue and re-filtered by the chosen district.
+  const [selectedDistrict, setSelectedDistrict] = useState('all');
+  const [selectedCity, setSelectedCity] = useState('all');
 
   const addToast = (message, type = 'info') => {
     const id = Date.now() + Math.random();
@@ -1174,7 +1180,11 @@ export const AppProvider = ({ children }) => {
         selectedListingType,
         setSelectedListingType,
         onlyVerified,
-        setOnlyVerified
+        setOnlyVerified,
+        selectedDistrict,
+        setSelectedDistrict,
+        selectedCity,
+        setSelectedCity
       }}
     >
       {children}

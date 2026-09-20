@@ -30,6 +30,8 @@ export const SellerStudio = () => {
     interiorColor: 'Black Leather',
     district: 'Colombo',
     city: 'Colombo 07',
+    mapLat: '',
+    mapLng: '',
     conditionGrade: 'B',
     damageZones: [],
     noDamage: false,
@@ -105,6 +107,14 @@ export const SellerStudio = () => {
       alert('Please select the vehicle district and city.');
       return;
     }
+    // Map pin is optional, but a half-entered coordinate would break the embed.
+    if ((formData.mapLat.trim() !== '' || formData.mapLng.trim() !== '') &&
+        (formData.mapLat.trim() === '' || formData.mapLng.trim() === '' ||
+         Math.abs(Number(formData.mapLat)) > 90 || Math.abs(Number(formData.mapLng)) > 180 ||
+         isNaN(Number(formData.mapLat)) || isNaN(Number(formData.mapLng)))) {
+      alert('Please enter both map coordinates (latitude and longitude) as valid numbers, or leave both blank.');
+      return;
+    }
 
     addVehicle({
       title: titleStr,
@@ -169,6 +179,8 @@ export const SellerStudio = () => {
         // both the offline demo and the Supabase backend persist them.
         district: formData.district,
         city: formData.city,
+        mapLat: formData.mapLat.trim() ? Number(formData.mapLat) : null,
+        mapLng: formData.mapLng.trim() ? Number(formData.mapLng) : null,
         conditionGrade: formData.conditionGrade,
         damageZones: formData.damageZones,
         noDamage: formData.noDamage,
@@ -339,6 +351,30 @@ export const SellerStudio = () => {
                 <select className="form-input" value={formData.city} onChange={e => handleChange('city', e.target.value)}>
                   {cityPoolFor(formData.district).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
+              </div>
+
+              {/* Exact viewing spot — buyers see a Google Map pin in the listing */}
+              <div className="form-group">
+                <label className="form-label">Vehicle Spot on Google Maps (optional)</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    className="form-input"
+                    placeholder="Latitude (e.g. 6.9271)"
+                    value={formData.mapLat}
+                    onChange={e => handleChange('mapLat', e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    step="0.000001"
+                    className="form-input"
+                    placeholder="Longitude (e.g. 79.8612)"
+                    value={formData.mapLng}
+                    onChange={e => handleChange('mapLng', e.target.value)}
+                  />
+                </div>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Open Google Maps, right-click the exact parking spot, copy the two numbers shown. Buyers see a pinned map on the listing.</span>
               </div>
 
               <div className="form-group">

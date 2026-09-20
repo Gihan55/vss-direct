@@ -72,6 +72,13 @@ export const VehicleDetailModal = () => {
   const locationLabel = (specs.city && specs.district)
     ? `${specs.city}, ${specs.district}`
     : (selectedVehicle.location || 'Not specified');
+  // Google Maps embed works without an API key via the classic output=embed
+  // endpoint. Prefer the seller's exact pin; fall back to a city/district query
+  // so every listing shows a usable map.
+  const hasPin = specs.mapLat != null && specs.mapLng != null && !isNaN(Number(specs.mapLat)) && !isNaN(Number(specs.mapLng));
+  const mapQuery = hasPin ? `${specs.mapLat},${specs.mapLng}` : locationLabel.replace(/,\s*/g, ' ');
+  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=${hasPin ? 15 : 11}&output=embed`;
+  const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
   const ratingCount = Number(specs.ratingCount || 0);
   const avgRating = ratingCount > 0 ? (Number(specs.ratingSum || 0) / ratingCount) : null;
   const conditionGrade = specs.conditionGrade || null;
@@ -291,6 +298,33 @@ export const VehicleDetailModal = () => {
                   {avgRating !== null ? `${avgRating.toFixed(1)}★ (${ratingCount})` : 'Not rated yet'}
                 </span>
               </div>
+            </div>
+
+            {/* Vehicle location — pinned Google Map for the viewing spot */}
+            <div style={{ marginTop: '20px', background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
+                <strong style={{ fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <MapPin size={15} color="var(--accent-cyan)" />
+                  <span>Vehicle Location</span>
+                </strong>
+                <a href={mapLink} target="_blank" rel="noreferrer" style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>
+                  Open in Google Maps ↗
+                </a>
+              </div>
+              <div className="listing-map-wrap">
+                <iframe
+                  title={`Map showing vehicle location: ${locationLabel}`}
+                  src={mapSrc}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '8px' }}>
+                {hasPin
+                  ? 'Pin placed by the seller at the exact spot where the vehicle can be inspected.'
+                  : 'Approximate area shown — the seller has not dropped an exact pin.'}
+                {' '}Always confirm the viewing address with the seller before travelling.
+              </p>
             </div>
           </div>
 

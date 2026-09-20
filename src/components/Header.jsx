@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
   ShieldCheck, Gavel, Car, UserCheck, ShieldAlert, Sparkles, 
-  PlusCircle, Activity, LogIn, LogOut, KeyRound, User, ChevronDown, Sun, Moon, Menu, X 
+  PlusCircle, Activity, LogIn, LogOut, KeyRound, User, ChevronDown, Sun, Moon, Menu, X, Flag 
 } from 'lucide-react';
 
 export const Header = () => {
@@ -22,7 +22,7 @@ export const Header = () => {
     canSell,
     dbEnabled,
     theme,
-    toggleTheme
+    setTheme
   } = useApp();
   
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -185,11 +185,11 @@ export const Header = () => {
             <span><strong>{telemetry.activeLiveVisitors}</strong> Live</span>
           </div>
 
-          {/* Theme switcher — Nikoba (light) vs the original VSS dark skin */}
+          {/* Theme switcher — Nikoba (light), VSS dark, and the racing skin */}
           <div className="theme-toggle-box" role="group" aria-label="Colour theme">
             <button
               className={`theme-toggle-btn ${theme === 'nikoba' ? 'active' : ''}`}
-              onClick={() => theme !== 'nikoba' && toggleTheme()}
+              onClick={() => setTheme('nikoba')}
               title="Nikoba light theme"
               aria-label="Nikoba light theme"
             >
@@ -197,11 +197,19 @@ export const Header = () => {
             </button>
             <button
               className={`theme-toggle-btn ${theme === 'vss-dark' ? 'active' : ''}`}
-              onClick={() => theme !== 'vss-dark' && toggleTheme()}
+              onClick={() => setTheme('vss-dark')}
               title="VSS dark theme"
               aria-label="VSS dark theme"
             >
               <Moon size={15} />
+            </button>
+            <button
+              className={`theme-toggle-btn ${theme === 'racing' ? 'active' : ''}`}
+              onClick={() => setTheme('racing')}
+              title="Racing theme"
+              aria-label="Racing theme"
+            >
+              <Flag size={15} />
             </button>
           </div>
 
