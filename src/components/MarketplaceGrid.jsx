@@ -1,7 +1,20 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { VehicleCard } from './VehicleCard';
+import { formatLKR, toLKR } from '../lib/currency';
 import { Search, Filter, ShieldCheck, Sparkles, AlertCircle, Award } from 'lucide-react';
+
+// Budget bands in LKR (listing amounts are stored in base units — see
+// lib/currency.js — so every band test converts with toLKR first).
+const PRICE_BANDS = [
+  { id: 'u10', label: 'Under Rs 10M', test: p => p > 0 && p < 10_000_000 },
+  { id: 'b1020', label: 'Rs 10M – 20M', test: p => p >= 10_000_000 && p < 20_000_000 },
+  { id: 'b2040', label: 'Rs 20M – 40M', test: p => p >= 20_000_000 && p < 40_000_000 },
+  { id: 'o40', label: 'Rs 40M & above', test: p => p >= 40_000_000 }
+];
+
+// Effective LKR price used for banding: live bid on auctions, asking on direct.
+const priceLKR = v => toLKR((v.listingType === 'auction' ? (v.currentBid || v.startingPrice) : v.directPrice) || 0);
 
 export const MarketplaceGrid = () => {
   const { 
@@ -20,6 +33,8 @@ export const MarketplaceGrid = () => {
     setSelectedDistrict,
     selectedCity,
     setSelectedCity,
+    selectedPriceBand,
+    setSelectedPriceBand,
     sponsorAds,
     setIsLoanModalOpen
   } = useApp();
@@ -37,6 +52,15 @@ export const MarketplaceGrid = () => {
     .filter(v => v.status === 'active' && (selectedDistrict === 'all' || districtOf(v) === selectedDistrict))
     .map(cityOf).filter(Boolean))];
 
+  // Chip counts come from the whole live catalogue so a chip never reads "0"
+  // the moment it is selected (LPW's facets are data-driven, not fixed).
+  const liveVehicles = vehicles.filter(v => v.status === 'active');
+  const districtCounts = liveVehicles.reduce((acc, v) => {
+    const d = districtOf(v);
+    if (d) acc[d] = (acc[d] || 0) + 1;
+    return acc;
+  }, {});
+
   // Filter vehicles
   const filteredVehicles = vehicles.filter(v => {
     // Only show active approved vehicles on public marketplace
@@ -50,6 +74,11 @@ export const MarketplaceGrid = () => {
 
     if (selectedDistrict !== 'all' && districtOf(v) !== selectedDistrict) return false;
     if (selectedCity !== 'all' && cityOf(v) !== selectedCity) return false;
+
+    if (selectedPriceBand !== 'all') {
+      const band = PRICE_BANDS.find(b => b.id === selectedPriceBand);
+      if (band && !band.test(priceLKR(v))) return false;
+    }
 
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
@@ -75,13 +104,35 @@ export const MarketplaceGrid = () => {
   // Still surface the "no match" panel when nothing matched at all.
   const showGridSection = filteredVehicles.length === 0 || gridVehicles.length > 0;
 
+  // Dynamic results heading ("… in Galle under Rs 10M (2 vehicles)") — mirrors
+  // the active filter state in the H1 itself for instant legibility.
+  const anyFilterActive = searchQuery.trim() !== '' || selectedMake !== 'all' || selectedBodyType !== 'all'
+    || selectedListingType !== 'all' || selectedDistrict !== 'all' || selectedCity !== 'all' || selectedPriceBand !== 'all';
+  const headingText = (() => {
+    if (!anyFilterActive) return 'Verified Automobile Marketplace';
+    const parts = [];
+    if (selectedMake !== 'all') parts.push(selectedMake);
+    if (selectedBodyType !== 'all') parts.push(selectedBodyType);
+    if (selectedListingType === 'auction') parts.push('Auction');
+    else if (selectedListingType === 'direct') parts.push('Direct-Buy');
+    const subject = parts.length ? parts.join(' ') : 'Clean-Title Vehicles';
+    const loc = selectedCity !== 'all' ? `in ${selectedCity}`
+      : selectedDistrict !== 'all' ? `in ${selectedDistrict} District`
+      : 'in Sri Lanka';
+    const band = PRICE_BANDS.find(b => b.id === selectedPriceBand);
+    const tail = [loc, band ? band.label.toLowerCase() : '', searchQuery.trim() ? `matching "${searchQuery.trim()}"` : '']
+      .filter(Boolean).join(' ');
+    const plural = filteredVehicles.length === 1 ? 'vehicle' : 'vehicles';
+    return `${subject} ${tail} (${filteredVehicles.length} ${plural})`;
+  })();
+
   return (
     <section id="marketplace-section" style={{ padding: '40px 0 60px' }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header-wrap">
           <div className="section-title-group">
-            <h2>Verified Automobile Marketplace</h2>
+            <h2>{headingText}</h2>
             <p className="section-subtitle">
               Browse 100% verified clean-title cars. Zero open-paper curbstoners. Genuine direct sellers only.
             </p>
@@ -91,6 +142,53 @@ export const MarketplaceGrid = () => {
             <ShieldCheck size={18} />
             <span>Showing {filteredVehicles.length} Clean-Title Vehicles</span>
           </div>
+        </div>
+
+        {/* One-tap facet chips — budget bands & districts with live counts */}
+        <div className="facet-chip-row">
+          <span className="facet-chip-group-label">Budget</span>
+          {PRICE_BANDS.map(band => {
+            const count = liveVehicles.filter(v => band.test(priceLKR(v))).length;
+            if (count === 0) return null;
+            const active = selectedPriceBand === band.id;
+            return (
+              <button
+                key={band.id}
+                className={`facet-chip ${active ? 'active' : ''}`}
+                onClick={() => setSelectedPriceBand(active ? 'all' : band.id)}
+              >
+                {band.label} <em>{count}</em>
+              </button>
+            );
+          })}
+          <span className="facet-chip-divider" aria-hidden="true" />
+          <span className="facet-chip-group-label">District</span>
+          {Object.entries(districtCounts)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([district, count]) => {
+              const active = selectedDistrict === district;
+              return (
+                <button
+                  key={district}
+                  className={`facet-chip ${active ? 'active' : ''}`}
+                  onClick={() => { setSelectedDistrict(active ? 'all' : district); setSelectedCity('all'); }}
+                >
+                  {district} <em>{count}</em>
+                </button>
+              );
+            })}
+          {anyFilterActive && (
+            <button
+              className="facet-chip facet-chip-clear"
+              onClick={() => {
+                setSearchQuery(''); setSelectedMake('all'); setSelectedBodyType('all');
+                setSelectedListingType('all'); setSelectedDistrict('all');
+                setSelectedCity('all'); setSelectedPriceBand('all');
+              }}
+            >
+              ✕ Clear all
+            </button>
+          )}
         </div>
 
         {/* Search & Filter Bar */}

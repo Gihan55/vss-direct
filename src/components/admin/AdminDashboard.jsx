@@ -5,7 +5,7 @@ import {
   ShieldCheck, AlertTriangle, Gavel, Banknote, Activity, 
   CheckCircle2, XCircle, Search, Eye, Users, FileText, Ban, 
   TrendingUp, Clock, Award, ShieldAlert, Sparkles, Filter,
-  UserPlus, Hourglass, UserCheck
+  UserPlus, Hourglass, UserCheck, PhoneCall, Headset
 } from 'lucide-react';
 
 export const AdminDashboard = () => {
@@ -24,6 +24,9 @@ export const AdminDashboard = () => {
     approveRequest,
     rejectRequest,
     createUser,
+    // VSS-assisted buyer inquiry queue
+    inquiries,
+    updateInquiryStatus,
     isSuperAdmin
   } = useApp();
 
@@ -43,6 +46,9 @@ export const AdminDashboard = () => {
   const pendingVehicles = vehicles.filter(v => v.status === 'pending_verification');
   const flaggedVehicles = vehicles.filter(v => v.status === 'flagged_middleman' || v.verification?.status === 'rejected');
   const liveAuctions = vehicles.filter(v => v.listingType === 'auction' && v.status === 'active');
+
+  // Assisted-listing callback requests awaiting agent attention.
+  const newInquiries = inquiries.filter(i => i.status === 'new');
 
   // Registration-request queue for the Access & Users tab.
   const pendingRequests = registrationRequests.filter(r => r.status === 'pending');
@@ -202,6 +208,19 @@ export const AdminDashboard = () => {
             <Gavel size={16} />
             <span>Live Auction Command</span>
             <span className="admin-tab-count">{liveAuctions.length}</span>
+          </button>
+
+          <button 
+            className={`admin-tab-btn ${adminActiveTab === 'inquiries' ? 'active' : ''}`}
+            onClick={() => setAdminActiveTab('inquiries')}
+          >
+            <Headset size={16} />
+            <span>Buyer Inquiries</span>
+            {newInquiries.length > 0 && (
+              <span className="admin-tab-count" style={{ background: 'var(--accent-red)', color: '#fff' }}>
+                {newInquiries.length}
+              </span>
+            )}
           </button>
 
           <button 
@@ -768,6 +787,61 @@ export const AdminDashboard = () => {
         )}
 
         {/* TAB 5: REVENUE & MONETIZATION ENGINE */}
+        {adminActiveTab === 'inquiries' && (
+          <div className="glass-panel" style={{ padding: '24px' }}>
+            <div style={{ marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <PhoneCall size={18} color="var(--accent-cyan)" />
+                <span>Buyer Inquiry Desk — VSS Assisted Listings</span>
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '6px' }}>
+                First calls captured by the platform. Call the buyer, screen the enquiry, confirm details with the seller, then mark the stage as you connect both parties.
+              </p>
+            </div>
+            {inquiries.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', padding: '20px 0' }}>
+                No callback requests yet — they appear here when a buyer uses “Request First Call via VSS” on an assisted listing.
+              </p>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', color: 'var(--text-muted)', borderBottom: '1px solid var(--border-medium)' }}>
+                      <th style={{ padding: '8px 10px' }}>Received</th>
+                      <th style={{ padding: '8px 10px' }}>Vehicle</th>
+                      <th style={{ padding: '8px 10px' }}>Buyer</th>
+                      <th style={{ padding: '8px 10px' }}>Phone</th>
+                      <th style={{ padding: '8px 10px' }}>Note</th>
+                      <th style={{ padding: '8px 10px' }}>Status</th>
+                      <th style={{ padding: '8px 10px' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {inquiries.map(inq => (
+                      <tr key={inq.id} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                        <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>{new Date(inq.createdAt).toLocaleString()}</td>
+                        <td style={{ padding: '8px 10px' }}>{inq.vehicleTitle}</td>
+                        <td style={{ padding: '8px 10px' }}><strong>{inq.buyerName}</strong></td>
+                        <td style={{ padding: '8px 10px' }}>{inq.buyerPhone}</td>
+                        <td style={{ padding: '8px 10px', maxWidth: '220px', color: 'var(--text-muted)' }}>{inq.note || '—'}</td>
+                        <td style={{ padding: '8px 10px' }}>
+                          <span className={`inquiry-status-pill ${inq.status}`}>{inq.status}</span>
+                        </td>
+                        <td style={{ padding: '8px 10px', whiteSpace: 'nowrap' }}>
+                          {inq.status === 'new' && <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.72rem', marginRight: '6px' }} onClick={() => updateInquiryStatus(inq.id, 'contacted')}>Called</button>}
+                          {inq.status === 'contacted' && <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.72rem', marginRight: '6px' }} onClick={() => updateInquiryStatus(inq.id, 'connected')}>Connected to Seller</button>}
+                          {inq.status !== 'closed' && <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.72rem' }} onClick={() => updateInquiryStatus(inq.id, 'closed')}>Close</button>}
+                          {inq.status === 'closed' && <button className="btn-secondary" style={{ padding: '4px 10px', fontSize: '0.72rem' }} onClick={() => updateInquiryStatus(inq.id, 'new')}>Reopen</button>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         {adminActiveTab === 'revenue' && (
           <div className="glass-panel" style={{ padding: '28px' }}>
             <div style={{ marginBottom: '24px' }}>

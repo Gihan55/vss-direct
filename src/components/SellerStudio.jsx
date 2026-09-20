@@ -39,6 +39,7 @@ export const SellerStudio = () => {
     odometerPhotoUrl: '',
     licensePlate: 'CBA-7712',
     isPlateMasked: true,
+    contactMode: 'assisted', // 'assisted' = VSS takes the first call | 'direct' = buyer calls seller
     listingType: 'auction', // 'auction' | 'direct'
     startingPrice: 10500000,
     reservePrice: 11700000,
@@ -184,6 +185,7 @@ export const SellerStudio = () => {
         conditionGrade: formData.conditionGrade,
         damageZones: formData.damageZones,
         noDamage: formData.noDamage,
+        contactMode: formData.contactMode,
         videoUrl: formData.videoUrl || null,
         odometerPhotoUrl: formData.odometerPhotoUrl
       }
@@ -780,6 +782,44 @@ export const SellerStudio = () => {
 
                 <div style={{ height: '1px', background: 'var(--border-subtle)' }}></div>
 
+                {/* Contact routing — mixed model: assisted (first call to us) or direct */}
+                <div>
+                  <strong style={{ fontSize: '0.9rem', display: 'block', marginBottom: '4px' }}>Buyer Contact Routing</strong>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '10px' }}>
+                    Choose whether VSS takes the first call like a reliable digital agent, or buyers reach you directly.
+                  </span>
+                  <div className="contact-routing-cards">
+                    <label className={`contact-route-card ${formData.contactMode === 'assisted' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="contactMode"
+                        value="assisted"
+                        checked={formData.contactMode === 'assisted'}
+                        onChange={() => handleChange('contactMode', 'assisted')}
+                      />
+                      <div>
+                        <strong>VSS Assisted <span className="assisted-badge">Recommended</span></strong>
+                        <span>Buyers request a callback and a VSS agent calls them first, screens the enquiry, then connects you. Your number stays private until you approve.</span>
+                      </div>
+                    </label>
+                    <label className={`contact-route-card ${formData.contactMode === 'direct' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="contactMode"
+                        value="direct"
+                        checked={formData.contactMode === 'direct'}
+                        onChange={() => handleChange('contactMode', 'direct')}
+                      />
+                      <div>
+                        <strong>Direct Contact</strong>
+                        <span>Serious buyers reach your shielded phone straight away (released to verified bidders / accepted offer buyers).</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div style={{ height: '1px', background: 'var(--border-subtle)' }}></div>
+
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <strong style={{ fontSize: '0.9rem', display: 'block' }}>Shield Telephone & Personal Address</strong>
@@ -800,6 +840,7 @@ export const SellerStudio = () => {
               <div className="r-cols-2" style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', gap: '8px' }}>
                 <div>Vehicle: <strong>{formData.year} {formData.make} {formData.model}</strong></div>
                 <div>Format: <strong>{formData.listingType === 'auction' ? 'Live Auction' : 'Direct Sale'}</strong></div>
+                <div>Contact: <strong>{formData.contactMode === 'assisted' ? 'VSS Assisted (we take the first call)' : 'Direct to seller'}</strong></div>
                 <div>Registered Owner: <strong>{formData.registeredOwnerName}</strong></div>
                 <div>CR Number: <strong>{formData.registrationDocNumber}</strong></div>
               </div>

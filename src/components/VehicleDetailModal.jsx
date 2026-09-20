@@ -15,6 +15,8 @@ export const VehicleDetailModal = () => {
     placeBid, 
     togglePlateMasking,
     rateVehicle,
+    addInquiry,
+    currentUser,
     setIsLoanModalOpen,
     setIsPledgeModalOpen,
     addToast
@@ -25,6 +27,10 @@ export const VehicleDetailModal = () => {
   const [offerValue, setOfferValue] = useState('');
   const [userRating, setUserRating] = useState(0);
   const [countdown, setCountdown] = useState('');
+  // VSS-assisted callback request form (first call goes through us).
+  const [inqName, setInqName] = useState('');
+  const [inqPhone, setInqPhone] = useState('');
+  const [inqNote, setInqNote] = useState('');
 
   // Every hook must run before any early return. Previously the
   // `if (!selectedVehicle) return null` guard sat above this useEffect, so
@@ -56,6 +62,10 @@ export const VehicleDetailModal = () => {
   // Reset the gallery whenever a different vehicle is opened.
   useEffect(() => {
     setActiveImgIdx(0);
+    // Pre-fill the callback form from the signed-in account when available.
+    setInqName(selectedVehicle ? (currentUser?.name || '') : '');
+    setInqPhone(selectedVehicle ? (currentUser?.phone || '') : '');
+    setInqNote('');
   }, [selectedVehicle?.id]);
 
   if (!selectedVehicle) return null;
@@ -140,6 +150,23 @@ export const VehicleDetailModal = () => {
           </p>
         </div>
 
+        {/* Sticky section quick-nav — jumps between the modal's panels */}
+        <div className="detail-anchor-tabs">
+          {[
+            { id: 'vd-overview', label: 'Overview' },
+            { id: 'vd-evidence', label: 'Condition & Evidence' },
+            { id: 'vd-location', label: 'Location' }
+          ].map(t => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => document.getElementById(t.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
         {/* Main Grid: Gallery & Bidding/Action */}
         <div className="detail-main-grid">
           {/* Left: Gallery with Privacy Masking Demo */}
@@ -215,7 +242,7 @@ export const VehicleDetailModal = () => {
             )}
 
             {/* Quick Specs Grid */}
-            <div className="r-cols-3" style={{ 
+            <div id="vd-overview" className="r-cols-3 anchor-target" style={{ 
               gap: '12px', 
               marginTop: '20px',
               background: 'var(--bg-inset)',
@@ -250,7 +277,7 @@ export const VehicleDetailModal = () => {
             </div>
 
             {/* Condition, Damage & Evidence (seller-disclosed) */}
-            <div style={{ marginTop: '20px', background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
+            <div id="vd-evidence" className="anchor-target" style={{ marginTop: '20px', background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
                 <strong style={{ fontSize: '0.95rem' }}>Condition, Damage & Evidence</strong>
                 {conditionGrade && (
@@ -301,7 +328,7 @@ export const VehicleDetailModal = () => {
             </div>
 
             {/* Vehicle location — pinned Google Map for the viewing spot */}
-            <div style={{ marginTop: '20px', background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
+            <div id="vd-location" className="anchor-target" style={{ marginTop: '20px', background: 'var(--bg-inset)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
                 <strong style={{ fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <MapPin size={15} color="var(--accent-cyan)" />
@@ -514,7 +541,74 @@ export const VehicleDetailModal = () => {
               </div>
             )}
 
-            {/* Privacy Shielded Seller Contact Box */}
+            {/* Contact box — routing depends on the seller's choice:
+                'assisted' listings take the first call through VSS agents,
+                everything else keeps the shielded direct seller phone. */}
+            {specs.contactMode === 'assisted' ? (
+              <div style={{
+                background: 'rgba(14, 19, 31, 0.8)',
+                border: '1px solid var(--border-active)',
+                borderRadius: 'var(--radius-md)',
+                padding: '16px',
+                marginTop: '16px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', gap: '8px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <UserCheck size={18} color="var(--accent-green)" />
+                    <strong style={{ fontSize: '0.92rem' }}>Seller identity protected</strong>
+                  </div>
+                  <span className="assisted-badge">VSS Assisted</span>
+                </div>
+
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '12px' }}>
+                  <Phone size={13} style={{ verticalAlign: 'middle', marginRight: '6px', color: 'var(--accent-cyan)' }} />
+                  <strong>We take the first call.</strong> Request a callback and a VSS digital agent will screen your enquiry, confirm the vehicle details with the owner, and connect you once the seller approves. Your number is never shown publicly.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Your name"
+                    value={inqName}
+                    onChange={e => setInqName(e.target.value)}
+                  />
+                  <input
+                    type="tel"
+                    className="form-input"
+                    placeholder="Phone for the callback (e.g. 077 123 4567)"
+                    value={inqPhone}
+                    onChange={e => setInqPhone(e.target.value)}
+                  />
+                  <textarea
+                    className="form-input"
+                    rows={2}
+                    placeholder="Anything specific you want the agent to confirm? (optional)"
+                    value={inqNote}
+                    onChange={e => setInqNote(e.target.value)}
+                    style={{ resize: 'vertical', minHeight: '48px' }}
+                  />
+                  <button
+                    className="btn-primary"
+                    style={{ width: '100%' }}
+                    onClick={() => {
+                      if (addInquiry({
+                        vehicleId: selectedVehicle.id,
+                        vehicleTitle: `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`,
+                        buyerName: inqName,
+                        buyerPhone: inqPhone,
+                        note: inqNote
+                      })) {
+                        setInqNote('');
+                      }
+                    }}
+                  >
+                    <Phone size={15} />
+                    <span>Request First Call via VSS</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
             <div style={{
               background: 'rgba(14, 19, 31, 0.8)',
               border: '1px solid var(--border-subtle)',
@@ -560,6 +654,7 @@ export const VehicleDetailModal = () => {
                 <span>Estimate Monthly Loan Payment</span>
               </button>
             </div>
+            )}
           </div>
         </div>
 

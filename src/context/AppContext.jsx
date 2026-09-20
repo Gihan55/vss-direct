@@ -239,6 +239,9 @@ export const AppProvider = ({ children }) => {
   // derived from the live catalogue and re-filtered by the chosen district.
   const [selectedDistrict, setSelectedDistrict] = useState('all');
   const [selectedCity, setSelectedCity] = useState('all');
+  // Budget band ('all' | 'u10' | 'b1020' | 'b2040' | 'o40') — driven by the
+  // one-tap facet chips above the grid (LankaPropertyWeb-style).
+  const [selectedPriceBand, setSelectedPriceBand] = useState('all');
 
   const addToast = (message, type = 'info') => {
     const id = Date.now() + Math.random();
@@ -246,6 +249,53 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 4500);
+  };
+
+  // ------------------------------------------------------------------
+  // VSS-assisted contact routing. Listings with specs.contactMode ===
+  // 'assisted' take the FIRST CALL through the platform: the buyer asks
+  // for a callback here and a VSS agent coordinates with the seller.
+  // 'direct' listings keep the classic seller-phone flow. The queue is
+  // browser-persisted (demo mode); in DB mode a future inquiries table
+  // would replace localStorage without touching this API surface.
+  // ------------------------------------------------------------------
+  const [inquiries, setInquiries] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('vss_inquiries'));
+      return Array.isArray(saved) ? saved : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const persistInquiries = (next) => {
+    setInquiries(next);
+    try { localStorage.setItem('vss_inquiries', JSON.stringify(next)); } catch (e) {}
+  };
+
+  const addInquiry = ({ vehicleId, vehicleTitle, buyerName, buyerPhone, note }) => {
+    if (!buyerName || !buyerName.trim() || !buyerPhone || !buyerPhone.trim()) {
+      addToast('Please provide your name and phone number for the callback.', 'error');
+      return false;
+    }
+    const next = [{
+      id: `inq-${Date.now()}`,
+      vehicleId,
+      vehicleTitle: vehicleTitle || '',
+      buyerName: buyerName.trim(),
+      buyerPhone: buyerPhone.trim(),
+      note: (note || '').trim(),
+      status: 'new', // 'new' | 'contacted' | 'connected' | 'closed'
+      createdAt: new Date().toISOString()
+    }, ...inquiries];
+    persistInquiries(next);
+    addToast('Request received — a VSS agent will call you first and coordinate with the seller.', 'success');
+    return true;
+  };
+
+  const updateInquiryStatus = (id, status) => {
+    persistInquiries(inquiries.map(i => (i.id === id ? { ...i, status } : i)));
+    addToast(`Inquiry marked ${status}.`, 'info');
   };
 
   // ------------------------------------------------------------------
@@ -1184,7 +1234,12 @@ export const AppProvider = ({ children }) => {
         selectedDistrict,
         setSelectedDistrict,
         selectedCity,
-        setSelectedCity
+        setSelectedCity,
+        selectedPriceBand,
+        setSelectedPriceBand,
+        inquiries,
+        addInquiry,
+        updateInquiryStatus
       }}
     >
       {children}
