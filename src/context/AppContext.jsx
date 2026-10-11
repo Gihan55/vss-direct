@@ -974,14 +974,13 @@ export const AppProvider = ({ children }) => {
         bidCount: 0,
         currentBid: basePrice,
         isReserveMet: false,
-        savingsVsMiddleman: Math.round((basePrice || 30000) * 0.07),
         status: 'pending_verification',
         ...newVehData,
         verification: {
           status: 'pending',
-          badge: 'Verification In Progress (No Open Papers Audit)',
+          badge: 'Verification In Progress (Clean Title Audit)',
           submittedAt: new Date().toISOString(),
-          noOpenPapersDeclarationSigned: true,
+          cleanTitleDeclarationSigned: true,
           ...(newVehData.verification || {})
         }
       };
@@ -1001,14 +1000,13 @@ export const AppProvider = ({ children }) => {
       viewsCount: 1, bidCount: 0, bids: [],
       currentBid: newVehData.startingPrice || newVehData.directPrice,
       isReserveMet: false,
-      savingsVsMiddleman: Math.round((newVehData.startingPrice || newVehData.directPrice || 30000) * 0.07),
       status: 'pending_verification',
       ...newVehData,
       verification: {
         status: 'pending',
-        badge: 'Verification In Progress (No Open Papers Audit)',
+        badge: 'Verification In Progress (Clean Title Audit)',
         submittedAt: new Date().toISOString(),
-        noOpenPapersDeclarationSigned: true,
+        cleanTitleDeclarationSigned: true,
         ...newVehData.verification
       }
     };
@@ -1060,11 +1058,11 @@ export const AppProvider = ({ children }) => {
           verification: {
             ...veh.verification,
             status: 'rejected',
-            badge: 'REJECTED: Open Papers / Title Audit Failed',
-            rejectionReason: reason || 'Document name does not match seller identity. Open papers suspected.'
+            badge: 'REJECTED: Clean Title Audit Failed',
+            rejectionReason: reason || 'Document name does not match seller identity. Registered-owner verification failed.'
           }
         });
-        addToast('🚫 Vehicle rejected under No Open Papers Policy.', 'error');
+        addToast('🚫 Vehicle rejected under the Clean Title Only policy.', 'error');
       } catch (e) { addToast('Action failed: ' + e.message, 'error'); }
       return;
     }
@@ -1074,36 +1072,13 @@ export const AppProvider = ({ children }) => {
         ...veh, status: 'rejected',
         verification: {
           ...veh.verification, status: 'rejected',
-          badge: 'REJECTED: Open Papers / Title Audit Failed',
-          rejectionReason: reason || 'Document name does not match seller identity. Open papers suspected.'
+          badge: 'REJECTED: Clean Title Audit Failed',
+          rejectionReason: reason || 'Document name does not match seller identity. Registered-owner verification failed.'
         }
       };
     }));
-    setTelemetry(prev => ({ ...prev, openPapersRejectedCount: (prev.openPapersRejectedCount || 0) + 1 }));
-    addToast('🚫 Vehicle rejected under No Open Papers Policy.', 'error');
-  };
-
-  const flagMiddleman = async (vehicleId) => {
-    if (dbEnabled && supabase) {
-      const veh = vehicles.find(v => v.id === vehicleId);
-      if (!veh) return;
-      try {
-        await api.updateListing(supabase, vehicleId, {
-          status: 'flagged_middleman',
-          seller: { ...veh.seller, directSellerConfirmed: false, brokerFlagScore: 98 }
-        });
-        addToast('⚠️ Middleman flagged and removed from peer-to-peer directory.', 'warning');
-      } catch (e) { addToast('Action failed: ' + e.message, 'error'); }
-      return;
-    }
-    setVehicles(prev => prev.map(veh => {
-      if (veh.id !== vehicleId) return veh;
-      return {
-        ...veh, status: 'flagged_middleman',
-        seller: { ...veh.seller, directSellerConfirmed: false, brokerFlagScore: 98 }
-      };
-    }));
-    addToast('⚠️ Middleman flagged and removed from peer-to-peer directory.', 'warning');
+    setTelemetry(prev => ({ ...prev, cleanTitleRejectedCount: (prev.cleanTitleRejectedCount || 0) + 1 }));
+    addToast('🚫 Vehicle rejected under the Clean Title Only policy.', 'error');
   };
 
   const togglePlateMasking = async (vehicleId) => {
@@ -1191,7 +1166,6 @@ export const AppProvider = ({ children }) => {
         addVehicle,
         approveVehicle,
         rejectVehicle,
-        flagMiddleman,
         togglePlateMasking,
         rateVehicle,
         // Authentication & access control

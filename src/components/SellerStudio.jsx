@@ -68,7 +68,7 @@ export const SellerStudio = () => {
   const handleFinalSubmit = (e) => {
     e.preventDefault();
     if (!formData.pledgeAccepted) {
-      alert('You must accept the No Open Papers Legal Undertaking to list on VSS.');
+      alert('You must accept the Clean Title Legal Undertaking to list on VSS.');
       return;
     }
 
@@ -150,8 +150,7 @@ export const SellerStudio = () => {
         fullPhone: '+94 77 123 4567',
         memberSince: 'Today',
         rating: 5.0,
-        directSellerConfirmed: true,
-        brokerFlagScore: 0
+        directSellerConfirmed: true
       },
       verification: {
         status: 'pending',
@@ -165,7 +164,7 @@ export const SellerStudio = () => {
         ownershipType: '1st Registered Owner',
         revenueLicenseValidUntil: '2027-12-31',
         financeEmbargo: 'None (Clean Title Declared)',
-        noOpenPapersDeclarationSigned: true,
+        cleanTitleDeclarationSigned: true,
         titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
         ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
       },
@@ -224,7 +223,7 @@ export const SellerStudio = () => {
           </div>
           <h2 style={{ fontSize: '2.4rem', marginTop: '8px' }}>Sell Your Vehicle Directly</h2>
           <p style={{ color: 'var(--text-secondary)', marginTop: '6px' }}>
-            Zero middleman deductions. Your vehicle will be certified with our "No Open Papers" trust seal.
+            No third-party deductions — you set and keep your price. Your vehicle will be certified with our "Clean Title Only" trust seal.
           </p>
         </div>
 
@@ -619,7 +618,7 @@ export const SellerStudio = () => {
           </div>
         )}
 
-        {/* Step 3: Title & No Open Papers Verification */}
+        {/* Step 3: Clean Title Verification */}
         {step === 3 && (
           <div className="glass-panel" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -627,7 +626,7 @@ export const SellerStudio = () => {
                 <ShieldCheck size={24} />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.3rem' }}>Step 3: "No Open Papers" Title Audit</h3>
+                <h3 style={{ fontSize: '1.3rem' }}>Step 3: Clean Title Verification</h3>
                 <p style={{ fontSize: '0.8rem', color: 'var(--accent-green)' }}>
                   Our legal team will verify these documents before granting your listing the gold Trust Seal.
                 </p>
@@ -717,12 +716,12 @@ export const SellerStudio = () => {
                   style={{ width: '18px', height: '18px', marginTop: '3px', accentColor: 'var(--accent-green)', cursor: 'pointer' }}
                 />
                 <div style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--text-primary)' }}>
-                  <strong>Mandatory Legal Undertaking (No Open Papers):</strong>
+                  <strong>Mandatory Legal Undertaking (Clean Title Only):</strong>
                   <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
                     I solemnly declare that I am the legal registered owner / certified legal attorney of this vehicle. 
-                    I affirm this vehicle has <strong>NOT</strong> been sold on open papers (blank signed forms) to any 
-                    intermediary, and I commit to executing the legal registration transfer deed directly into the name 
-                    of the buyer upon settlement.
+                    I affirm the vehicle's ownership was transferred into my name through a fully executed legal deed 
+                    (no blank or unsigned transfer forms), and I commit to executing the legal registration transfer deed 
+                    directly into the name of the buyer upon settlement.
                   </p>
                 </div>
               </label>
@@ -741,7 +740,7 @@ export const SellerStudio = () => {
                     return;
                   }
                   if (!formData.pledgeAccepted) {
-                    alert('Please accept the No Open Papers legal declaration.');
+                    alert('Please accept the Clean Title legal declaration.');
                     return;
                   }
                   setStep(4);
@@ -824,7 +823,7 @@ export const SellerStudio = () => {
                   <div>
                     <strong style={{ fontSize: '0.9rem', display: 'block' }}>Shield Telephone & Personal Address</strong>
                     <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      Your phone number is locked against cold-calling car brokers. Only released to verified auction winners or accepted buyers.
+                      Your phone number is locked against cold-calling resellers and spam. Only released to verified auction winners or accepted buyers.
                     </span>
                   </div>
                   <span style={{ fontSize: '0.75rem', color: 'var(--accent-green)', fontWeight: 700 }}>

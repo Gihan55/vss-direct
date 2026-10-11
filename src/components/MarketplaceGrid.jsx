@@ -134,7 +134,7 @@ export const MarketplaceGrid = () => {
           <div className="section-title-group">
             <h2>{headingText}</h2>
             <p className="section-subtitle">
-              Browse 100% verified clean-title cars. Zero open-paper curbstoners. Genuine direct sellers only.
+              Browse 100% verified clean-title cars. Direct Owner Verified. Genuine owners only.
             </p>
           </div>
 

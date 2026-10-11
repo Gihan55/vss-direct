@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { formatLKR } from '../../lib/currency';
 import { 
-  ShieldCheck, AlertTriangle, Gavel, Banknote, Activity, 
-  CheckCircle2, XCircle, Search, Eye, Users, FileText, Ban, 
+  ShieldCheck, Gavel, Banknote, Activity, 
+  CheckCircle2, XCircle, Search, Eye, Users, FileText,
   TrendingUp, Clock, Award, ShieldAlert, Sparkles, Filter,
   UserPlus, Hourglass, UserCheck, PhoneCall, Headset
 } from 'lucide-react';
@@ -16,7 +16,6 @@ export const AdminDashboard = () => {
     setAdminActiveTab, 
     approveVehicle, 
     rejectVehicle, 
-    flagMiddleman,
     addToast,
     // Access control
     accounts,
@@ -33,7 +32,7 @@ export const AdminDashboard = () => {
   const [selectedAuditVehicle, setSelectedAuditVehicle] = useState(
     vehicles.find(v => v.status === 'pending_verification') || vehicles[0]
   );
-  const [rejectReason, setRejectReason] = useState('Open papers detected / Seller name does not match registered owner on CR');
+  const [rejectReason, setRejectReason] = useState('Seller name does not match registered owner on CR — Clean Title policy violation');
 
   // Create-user form state (super user only)
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -44,7 +43,6 @@ export const AdminDashboard = () => {
   const [cuRole, setCuRole] = useState('buyer');
 
   const pendingVehicles = vehicles.filter(v => v.status === 'pending_verification');
-  const flaggedVehicles = vehicles.filter(v => v.status === 'flagged_middleman' || v.verification?.status === 'rejected');
   const liveAuctions = vehicles.filter(v => v.listingType === 'auction' && v.status === 'active');
 
   // Assisted-listing callback requests awaiting agent attention.
@@ -86,7 +84,7 @@ export const AdminDashboard = () => {
               <h2 style={{ fontSize: '2rem' }}>VSS Regulatory & Intelligence Center</h2>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>
-              Enforce "No Open Papers" policy, eliminate curbstoner middlemen, manage auctions, and track behind-the-scenes metrics.
+              Enforce the Clean Title Only policy, certify direct owners, manage auctions, and track behind-the-scenes metrics.
             </p>
           </div>
 
@@ -104,7 +102,7 @@ export const AdminDashboard = () => {
               fontWeight: 700
             }}>
               <ShieldCheck size={16} />
-              <span>Audit Policy: Strictly Zero Open Papers</span>
+              <span>Audit Policy: Clean Title Only</span>
             </span>
           </div>
         </div>
@@ -129,9 +127,9 @@ export const AdminDashboard = () => {
               <ShieldAlert size={24} />
             </div>
             <div>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Open Papers Blocked</span>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Clean Title Rejections</span>
               <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-red)' }}>
-                {telemetry.openPapersRejectedCount}
+                {telemetry.cleanTitleRejectedCount}
               </div>
               <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Frauds intercepted</span>
             </div>
@@ -193,15 +191,6 @@ export const AdminDashboard = () => {
           </button>
 
           <button 
-            className={`admin-tab-btn ${adminActiveTab === 'middleman' ? 'active' : ''}`}
-            onClick={() => setAdminActiveTab('middleman')}
-          >
-            <Ban size={16} />
-            <span>Middleman & Fraud Radar</span>
-            <span className="admin-tab-count">{flaggedVehicles.length}</span>
-          </button>
-
-          <button 
             className={`admin-tab-btn ${adminActiveTab === 'auctions' ? 'active' : ''}`}
             onClick={() => setAdminActiveTab('auctions')}
           >
@@ -247,7 +236,7 @@ export const AdminDashboard = () => {
               <div>
                 <h3 style={{ fontSize: '1.4rem' }}>Title Verification Queue</h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Audit vehicle Certificate of Registration (CR) vs Seller Identity to stop "Open Papers" and certify direct owners.
+                  Audit vehicle Certificate of Registration (CR) vs Seller Identity to certify the direct registered owner under the Clean Title Only policy.
                 </p>
               </div>
 
@@ -379,7 +368,7 @@ export const AdminDashboard = () => {
                       <div>Submitter Name: <strong>{selectedAuditVehicle.seller?.name || 'Unknown'}</strong></div>
                       <div>Submitter ID: <strong>{selectedAuditVehicle.verification?.ownerIdNumber}</strong></div>
                       <div>Unmasked Phone: <strong>{selectedAuditVehicle.seller?.fullPhone || 'Protected'}</strong></div>
-                      <div>Open Papers Declaration: <strong>{selectedAuditVehicle.verification?.noOpenPapersDeclarationSigned ? 'Signed & Agreed' : 'NOT SIGNED'}</strong></div>
+                      <div>Clean Title Declaration: <strong>{selectedAuditVehicle.verification?.cleanTitleDeclarationSigned ? 'Signed & Agreed' : 'NOT SIGNED'}</strong></div>
                       <div>Finance Embargo: <strong>{selectedAuditVehicle.verification?.financeEmbargo || 'Clean Title'}</strong></div>
                     </div>
                   </div>
@@ -417,7 +406,7 @@ export const AdminDashboard = () => {
                       onClick={() => rejectVehicle(selectedAuditVehicle.id, rejectReason)}
                     >
                       <XCircle size={16} />
-                      <span>Reject (Open Papers Policy Violation)</span>
+                      <span>Reject (Clean Title Policy Violation)</span>
                     </button>
                   </div>
                 </div>
@@ -640,74 +629,7 @@ export const AdminDashboard = () => {
           </div>
         )}
 
-        {/* TAB 3: MIDDLEMAN & ANTI-FRAUD RADAR (DISINTERMEDIATION) */}
-        {adminActiveTab === 'middleman' && (
-          <div className="glass-panel" style={{ padding: '28px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <div>
-                <h3 style={{ fontSize: '1.4rem' }}>Middleman & Curbstoner Detection Radar</h3>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                  Automated heuristics to identify informal brokers attempting to flip cars without legal transfer.
-                </p>
-              </div>
-
-              <div style={{ background: 'rgba(255, 51, 102, 0.1)', color: 'var(--accent-red)', padding: '6px 12px', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem', fontWeight: 700 }}>
-                {flaggedVehicles.length} Potential Broker Violations Intercepted
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {flaggedVehicles.map(veh => (
-                <div 
-                  key={veh.id}
-                  className="admin-grid-a"
-                  style={{
-                    background: 'rgba(255, 51, 102, 0.04)',
-                    border: '1px solid rgba(255, 51, 102, 0.3)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '20px'
-                  }}
-                >
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                      <AlertTriangle size={16} color="var(--accent-red)" />
-                      <strong style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>{veh.title}</strong>
-                      <span style={{ fontSize: '0.7rem', background: 'rgba(255, 51, 102, 0.2)', color: 'var(--accent-red)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-                        BROKER RISK: {veh.seller?.brokerFlagScore ?? 0}%
-                      </span>
-                    </div>
-
-                    <p style={{ fontSize: '0.82rem', color: 'var(--accent-red)', marginBottom: '8px' }}>
-                      Violation Reason: {veh.verification?.rejectionReason || 'Name mismatch between submitter and registration certificate (CR). Open papers detected.'}
-                    </p>
-
-                    <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      Submitter: <strong>{veh.seller?.name || 'Unknown'}</strong> • Unmasked Phone: {veh.seller?.fullPhone || 'Protected'} • Plate: {veh.licensePlate}
-                    </div>
-                  </div>
-
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    <div>CR Doc #: <strong>{veh.verification?.registrationDocNumber || 'N/A'}</strong></div>
-                    <div>CR Registered Name: <strong>{veh.verification?.registeredOwnerName || 'Unspecified'}</strong></div>
-                    <div>License Status: <strong style={{ color: 'var(--accent-red)' }}>{veh.verification?.revenueLicenseValidUntil || 'N/A'}</strong></div>
-                  </div>
-
-                  <div>
-                    <button 
-                      className="btn-danger"
-                      onClick={() => flagMiddleman(veh.id)}
-                    >
-                      <Ban size={15} />
-                      <span>Blacklist Broker Phone</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* TAB 4: LIVE AUCTION COMMAND CENTER */}
+        {/* TAB 3: LIVE AUCTION COMMAND CENTER */}
         {adminActiveTab === 'auctions' && (
           <div className="glass-panel" style={{ padding: '28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -786,7 +708,7 @@ export const AdminDashboard = () => {
           </div>
         )}
 
-        {/* TAB 5: REVENUE & MONETIZATION ENGINE */}
+        {/* TAB 4: BUYER INQUIRY DESK (VSS ASSISTED ROUTING) */}
         {adminActiveTab === 'inquiries' && (
           <div className="glass-panel" style={{ padding: '24px' }}>
             <div style={{ marginBottom: '16px' }}>
@@ -907,7 +829,7 @@ export const AdminDashboard = () => {
           </div>
         )}
 
-        {/* TAB 6: BEHIND-THE-SCREENS TELEMETRY & STRATEGIC ANALYTICS */}
+        {/* TAB 5: BEHIND-THE-SCREENS TELEMETRY & STRATEGIC ANALYTICS */}
         {adminActiveTab === 'telemetry' && (
           <div className="glass-panel" style={{ padding: '28px' }}>
             <div style={{ marginBottom: '24px' }}>

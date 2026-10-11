@@ -658,7 +658,7 @@ export const VehicleDetailModal = () => {
           </div>
         </div>
 
-        {/* Core Feature: 3-Tier Clean Title & No Open Papers Audit Sheet */}
+        {/* Core Feature: 3-Tier Clean Title Audit Sheet */}
         <div className="title-verification-sheet">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -675,7 +675,7 @@ export const VehicleDetailModal = () => {
                 <ShieldCheck size={22} />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.15rem' }}>No Open Papers: Legal Title Assurance Report</h3>
+                <h3 style={{ fontSize: '1.15rem' }}>Clean Title Only: Legal Title Assurance Report</h3>
                 <span style={{ fontSize: '0.78rem', color: 'var(--accent-green)' }}>
                   Audited by VSS Title Certification Bureau • 100% Legal Certainty
                 </span>

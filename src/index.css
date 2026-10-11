@@ -963,19 +963,6 @@ input, select, textarea {
   border-radius: var(--radius-full);
 }
 
-/* Middleman Savings Ribbon */
-.savings-ribbon {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(0, 229, 255, 0.06);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: 0.76rem;
-  color: var(--accent-cyan);
-  margin-top: 12px;
-}
-
 /* Modal Overlay & Card Details */
 .modal-overlay {
   position: fixed;
@@ -1459,7 +1446,7 @@ input, select, textarea {
 .r-cols-2 { display: grid; grid-template-columns: repeat(2, 1fr); }
 .r-cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); }
 
-/* Admin list rows (fraud radar + auction command) */
+/* Admin list rows (auction command) */
 .admin-grid-a { display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 20px; align-items: center; }
 .admin-grid-b { display: grid; grid-template-columns: 1.2fr 1fr 1fr auto; gap: 20px; align-items: center; }
 
@@ -2202,10 +2189,6 @@ html[data-theme="nikoba"] .clean-title-verified-pill {
   background: rgba(21, 128, 61, 0.07);
   border: 1px solid rgba(21, 128, 61, 0.22);
   color: var(--accent-green);
-}
-html[data-theme="nikoba"] .savings-ribbon {
-  background: rgba(26, 35, 126, 0.05);
-  color: var(--accent-cyan);
 }
 html[data-theme="nikoba"] .auction-countdown-chip {
   background: rgba(217, 119, 6, 0.1);

@@ -99,9 +99,9 @@ async function seedTelemetry() {
 async function seedListings(sellerUserId) {
   for (const veh of INITIAL_VEHICLES) {
     const row = vehicleToRow(veh, {
-      // Give the demo seller ownership of genuine listings; the flagged broker
+      // Give the demo seller ownership of genuine listings; the rejected
       // entry stays ownerless so it cannot be "fixed" by a normal user.
-      ownerId: veh.status === 'flagged_middleman' ? null : sellerUserId ?? null,
+      ownerId: veh.status === 'rejected' ? null : sellerUserId ?? null,
     });
     const { error } = await supabase.from('listings').upsert(row);
     if (error) throw error;

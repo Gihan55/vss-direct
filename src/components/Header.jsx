@@ -69,7 +69,7 @@ export const Header = () => {
       key: 'policy',
       icon: ShieldCheck,
       iconColor: 'var(--accent-green)',
-      label: 'Why No Open Papers?',
+      label: 'Why Clean Title?',
       onClick: () => setIsPledgeModalOpen(true),
     },
     {
@@ -169,7 +169,7 @@ export const Header = () => {
             </div>
             <div className="brand-subtext">
               <ShieldCheck size={12} />
-              <span>Strictly No Open Papers • 100% Direct Owner</span>
+              <span>Clean Title Only • Direct Owner Verified</span>
             </div>
           </div>
         </div>
