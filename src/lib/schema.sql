@@ -154,7 +154,6 @@ create table if not exists public.listings (
   location           text,
   license_plate      text,
   is_plate_masked    boolean default true,
-  savings_vs_middleman int default 0,
   verification       jsonb,
   seller             jsonb,
   specs              jsonb,
@@ -299,7 +298,7 @@ create trigger bids_after_insert
   for each row execute function public.after_bid_insert();
 
 -- Trigger: when a listing transitions to 'rejected', count it as a stopped
--- open-paper fraud in the shared telemetry.
+-- failed-title listing in the shared telemetry.
 create or replace function public.after_listing_change()
 returns trigger
 language plpgsql
@@ -311,8 +310,8 @@ begin
     update public.telemetry
        set data = jsonb_set(
              data,
-             '{openPapersRejectedCount}',
-             to_jsonb( coalesce((data ->> 'openPapersRejectedCount')::int, 0) + 1 )
+             '{cleanTitleRejectedCount}',
+             to_jsonb( coalesce((data ->> 'cleanTitleRejectedCount')::int, 0) + 1 )
            )
      where id = 1;
   end if;

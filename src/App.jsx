@@ -109,7 +109,7 @@ export function App() {
             </div>
 
             <div style={{ display: 'flex', gap: '20px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-              <span>Strict "No Open Papers" Standard</span>
+              <span>Clean Title Only • Direct Owner Verified</span>
               <span>•</span>
               <span>100% Peer-to-Peer</span>
               <span>•</span>

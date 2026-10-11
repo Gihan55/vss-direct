@@ -9,30 +9,30 @@ export const TrustPillars = () => {
     <section className="trust-pillars-section">
       <div className="container">
         <div className="trust-grid">
-          {/* Pillar 1: No Open Papers */}
+          {/* Pillar 1: Clean Title Only */}
           <div className="trust-card" onClick={() => setIsPledgeModalOpen(true)} style={{ cursor: 'pointer' }}>
             <div className="trust-icon-box green">
               <ShieldCheck size={26} />
             </div>
-            <h3 className="trust-title">No Open Papers Policy</h3>
+            <h3 className="trust-title">Clean Title Only Policy</h3>
             <p className="trust-desc">
               Every vehicle's Certificate of Registration (CR) is verified directly against the registered owner's 
-              government ID. Zero curbstoners, blank transfer forms, or undisclosed finance liens.
+              government ID. No blank transfer forms, no resellers, no undisclosed finance liens.
             </p>
             <div style={{ marginTop: '12px', fontSize: '0.78rem', color: 'var(--accent-green)', fontWeight: 600 }}>
               Learn our 3-tier title audit →
             </div>
           </div>
 
-          {/* Pillar 2: Disintermediation */}
+          {/* Pillar 2: Direct Owner Deals */}
           <div className="trust-card">
             <div className="trust-icon-box cyan">
               <Users size={26} />
             </div>
-            <h3 className="trust-title">0% Middleman Interference</h3>
+            <h3 className="trust-title">100% Direct Owner Deals</h3>
             <p className="trust-desc">
-              We cut out parasitic third-party dealers and street brokers who siphon 5% to 12% in hidden markups. 
-              The financial savings go straight to the genuine buyer and seller.
+              Every listing comes straight from the verified registered owner — no hidden markups or 
+              commission layers added along the way. The financial savings go straight to the genuine buyer and seller.
             </p>
             <div style={{ marginTop: '12px', fontSize: '0.78rem', color: 'var(--accent-cyan)', fontWeight: 600 }}>
               Average buyer saving: Rs 960,000+
