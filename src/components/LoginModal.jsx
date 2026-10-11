@@ -38,7 +38,7 @@ export const LoginModal = () => {
   const [regPhone, setRegPhone] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regRole, setRegRole] = useState('buyer'); // 'buyer' | 'seller'
-  const [antiMiddlemanPledge, setAntiMiddlemanPledge] = useState(false);
+  const [directOwnerPledge, setDirectOwnerPledge] = useState(false);
 
   // Request tracker state
   const [trackEmail, setTrackEmail] = useState('');
@@ -56,8 +56,8 @@ export const LoginModal = () => {
     e.preventDefault();
     if (!regName || !regEmail || !regPassword) return;
     if (regPassword.length < 6) return;
-    if (!antiMiddlemanPledge) {
-      alert('You must accept the anti-middleman integrity pledge to register.');
+    if (!directOwnerPledge) {
+      alert('You must accept the direct-owner integrity pledge to register.');
       return;
     }
     const ok = await register({
@@ -73,7 +73,7 @@ export const LoginModal = () => {
       setAuthTab('signin');
       setSignInEmail(regEmail);
       setRegPassword(''); setRegName(''); setRegEmail(''); setRegPhone('');
-      setAntiMiddlemanPledge(false);
+      setDirectOwnerPledge(false);
     }
   };
 
@@ -135,7 +135,7 @@ export const LoginModal = () => {
             {authTab === 'signin' ? 'Welcome Back to VSS' : 'Request Verified Access'}
           </h2>
           <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Strictly No Open Papers • Direct P2P Vehicle Marketplace
+            Clean Title Only • Direct Owner Vehicle Marketplace
           </p>
         </div>
 
@@ -474,7 +474,7 @@ export const LoginModal = () => {
               </div>
             </div>
 
-            {/* Anti-Middleman Integrity Pledge */}
+            {/* Direct Owner Integrity Pledge */}
             <div style={{
               background: 'rgba(255, 184, 0, 0.05)',
               border: '1px solid rgba(255, 184, 0, 0.3)',
@@ -485,12 +485,12 @@ export const LoginModal = () => {
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
-                  checked={antiMiddlemanPledge}
-                  onChange={(e) => setAntiMiddlemanPledge(e.target.checked)}
+                  checked={directOwnerPledge}
+                  onChange={(e) => setDirectOwnerPledge(e.target.checked)}
                   style={{ width: '16px', height: '16px', marginTop: '2px', accentColor: 'var(--accent-green)', cursor: 'pointer' }}
                 />
                 <span style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                  <strong>Anti-Middleman Declaration:</strong> I certify that I am a genuine private individual. I will NOT list or trade open-papers vehicles or act as an informal broker on this platform.
+                  <strong>Direct Owner Declaration:</strong> I certify that I am a genuine private individual listing in my own name. I will NOT list a vehicle whose registered owner name differs from mine, and I will execute a full legal transfer on sale.
                 </span>
               </label>
             </div>

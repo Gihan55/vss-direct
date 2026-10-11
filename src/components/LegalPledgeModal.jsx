@@ -19,7 +19,7 @@ export const LegalPledgeModal = () => {
             <ShieldCheck size={28} />
           </div>
           <div>
-            <h2 style={{ fontSize: '1.8rem' }}>The "No Open Papers" Core Guarantee</h2>
+            <h2 style={{ fontSize: '1.8rem' }}>The "Clean Title Only" Core Guarantee</h2>
             <span style={{ fontSize: '0.85rem', color: 'var(--accent-green)', fontWeight: 600 }}>
               Why Legal Title Certainty is the Foundation of VSS
             </span>
@@ -27,21 +27,21 @@ export const LegalPledgeModal = () => {
         </div>
 
         <div className="pledge-grid">
-          {/* Danger of Open Papers */}
+          {/* Danger of Incomplete Title Transfer */}
           <div style={{ background: 'rgba(255, 51, 102, 0.06)', border: '1px solid rgba(255, 51, 102, 0.3)', borderRadius: 'var(--radius-md)', padding: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: 'var(--accent-red)' }}>
               <Ban size={20} />
-              <h3 style={{ fontSize: '1.1rem' }}>The "Open Paper" Trap (Banned)</h3>
+              <h3 style={{ fontSize: '1.1rem' }}>The Blank-Forms Trap (Banned)</h3>
             </div>
             <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '14px' }}>
-              An "Open Paper" car is sold with blank, undated transfer forms signed by a previous registered owner. 
-              Middlemen hoard and flip these cars repeatedly to avoid transfer taxes and vehicle registry tracking.
+              A risky car is sold with blank, undated transfer forms signed by a previous registered owner. 
+              Unverified resellers hoard and flip these cars repeatedly to avoid transfer taxes and vehicle registry tracking.
             </p>
             <ul style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '8px', paddingLeft: '18px' }}>
               <li><strong>Finance Seizure:</strong> Undisclosed bank or leasing liens can lead to vehicle repossession.</li>
               <li><strong>Deceased/Missing Owner:</strong> If the original registered owner cannot be located, legal DMV transfer is impossible.</li>
               <li><strong>Criminal Exposure:</strong> Original owners are summoned for hit-and-runs or illegal transport committed by intermediaries.</li>
-              <li><strong>7-15% Broker Cut:</strong> Shady middlemen inflate costs without offering a shred of warranty.</li>
+              <li><strong>7–15% Hidden Cut:</strong> Unregistered resellers inflate costs without offering a shred of warranty.</li>
             </ul>
           </div>
 
@@ -59,7 +59,7 @@ export const LegalPledgeModal = () => {
               <li><strong>CR vs. NIC Match:</strong> Official motor registry certificate is cross-audited against government ID.</li>
               <li><strong>Direct Handover:</strong> Official DMV transfer documents are executed directly between buyer and seller.</li>
               <li><strong>Direct Settlement:</strong> Settlement and transfer execute directly between the buyer and the registered owner.</li>
-              <li><strong>Complete Privacy:</strong> Protected from public scraping, cold calls, and curbstoner fraud.</li>
+              <li><strong>Complete Privacy:</strong> Protected from public scraping, cold calls, and reseller fraud.</li>
             </ul>
           </div>
         </div>

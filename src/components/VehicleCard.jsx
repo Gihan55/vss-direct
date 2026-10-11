@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
-import { formatLKR } from '../lib/currency';
-import { ShieldCheck, Gavel, Gauge, Fuel, Cog, MapPin, Lock, Eye, CheckCircle2, Star } from 'lucide-react';
+import { formatLKR, toLKR } from '../lib/currency';
+import { ShieldCheck, Gavel, Gauge, Fuel, Cog, MapPin, Lock, Eye, CheckCircle2, Star, Camera, Video } from 'lucide-react';
 
 export const VehicleCard = ({ vehicle }) => {
   const { trackView } = useApp();
@@ -68,6 +68,20 @@ export const VehicleCard = ({ vehicle }) => {
           )}
         </div>
 
+        {/* Media richness chips — photo/video counts as a trust signal */}
+        <div className="media-count-chips">
+          <span className="media-count" title={`${(vehicle.images || []).length} photos`}>
+            <Camera size={11} />
+            <span>{(vehicle.images || []).length}</span>
+          </span>
+          {specs.videoUrl && (
+            <span className="media-count" title="Owner video available">
+              <Video size={11} />
+              <span>Video</span>
+            </span>
+          )}
+        </div>
+
         {/* Privacy Plate Masking Tag */}
         {vehicle.isPlateMasked && (
           <div className="plate-mask-banner" title="Registration plate auto-blurred to protect owner privacy">
@@ -111,6 +125,9 @@ export const VehicleCard = ({ vehicle }) => {
               Grade {cardGrade}
             </span>
           )}
+          {specs.contactMode === 'assisted' && (
+            <span className="assisted-badge">VSS Assisted</span>
+          )}
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: 'var(--accent-gold)', fontWeight: 700 }}>
             <Star size={12} fill="var(--accent-gold)" color="var(--accent-gold)" />
             {cardRating !== null ? cardRating.toFixed(1) : 'New'}
@@ -126,6 +143,10 @@ export const VehicleCard = ({ vehicle }) => {
             <div className="current-price-display" style={{ color: isAuction ? 'var(--accent-cyan)' : 'var(--text-primary)' }}>
               {formatLKR(price)}
             </div>
+            {/* Secondary value metric — rupees per km driven (LPW per-sqft style) */}
+            {vehicle.mileage > 0 && price > 0 && (
+              <div className="price-per-km">Rs {Math.round(toLKR(price) / vehicle.mileage).toLocaleString('en-US')} / km</div>
+            )}
           </div>
 
           {isAuction ? (

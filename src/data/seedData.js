@@ -1,5 +1,5 @@
 // Seed Data for VSS (Vehicle Sourcing & Selling Platform)
-// Core Policy: No Open Papers. Direct Owner Verified.
+// Core Policy: Clean Title Only. Direct Owner Verified.
 
 export const INITIAL_VEHICLES = [
   {
@@ -9,7 +9,7 @@ export const INITIAL_VEHICLES = [
     model: 'Land Cruiser Prado',
     year: 2022,
     bodyType: 'SUV',
-    transmission: 'Automatic',
+    transmission: 'Automatic',                                                                                                                                                                              
     fuelType: 'Diesel',
     mileage: 28400,
     engineCc: '2800cc Turbo',
@@ -33,7 +33,7 @@ export const INITIAL_VEHICLES = [
       'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=1200&q=80',
     ],
-    // Clean Title & No Open Papers Verification Details
+    // Clean Title Verification Details
     verification: {
       status: 'verified', // 'verified' | 'pending' | 'rejected'
       badge: '100% Clean Title • Direct Registered Owner',
@@ -47,7 +47,7 @@ export const INITIAL_VEHICLES = [
       ownershipType: '1st Registered Owner (Direct from Brand New)',
       revenueLicenseValidUntil: '2027-04-30',
       financeEmbargo: 'None (Absolute Clear Title - Lien Cleared)',
-      noOpenPapersDeclarationSigned: true,
+      cleanTitleDeclarationSigned: true,
       inspectionScore: 96, // out of 100
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
@@ -60,8 +60,7 @@ export const INITIAL_VEHICLES = [
       fullPhone: '+94 77 348 1192',
       memberSince: 'March 2024',
       rating: 4.9,
-      directSellerConfirmed: true,
-      brokerFlagScore: 0 // 0 means genuine private seller
+      directSellerConfirmed: true
     },
     specs: {
       seating: '7 Seater',
@@ -70,7 +69,7 @@ export const INITIAL_VEHICLES = [
       audio: 'JBL Premium Surround 14 Speakers',
       keys: '2 Original Smart Keys Available',
       serviceRecords: '100% Agent Maintained with all invoices',
-      district: 'Colombo', city: 'Colombo 07', conditionGrade: 'A',
+      district: 'Colombo', city: 'Colombo 07', mapLat: 6.9271, mapLng: 79.8612, conditionGrade: 'A', contactMode: 'assisted',
       noDamage: true, damageZones: [],
       videoUrl: 'https://example.com/walkaround/veh-001',
       odometerPhotoUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
@@ -83,7 +82,6 @@ export const INITIAL_VEHICLES = [
       { id: 'bid-11', bidder: 'Verified Bidder #318', amount: 65000, time: '4 hours ago', isWinning: false },
       { id: 'bid-10', bidder: 'Verified Bidder #104', amount: 63000, time: '8 hours ago', isWinning: false }
     ],
-    savingsVsMiddleman: 4800, // Direct buyer/seller saving
     viewsCount: 1420
   },
   {
@@ -130,7 +128,7 @@ export const INITIAL_VEHICLES = [
       ownershipType: '1st Registered Owner',
       revenueLicenseValidUntil: '2027-02-28',
       financeEmbargo: 'None (Full Bank NOC Cleared)',
-      noOpenPapersDeclarationSigned: true,
+      cleanTitleDeclarationSigned: true,
       inspectionScore: 99,
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
@@ -142,8 +140,7 @@ export const INITIAL_VEHICLES = [
       fullPhone: '+94 71 882 1914',
       memberSince: 'January 2025',
       rating: 5.0,
-      directSellerConfirmed: true,
-      brokerFlagScore: 0
+      directSellerConfirmed: true
     },
     specs: {
       seating: '5 Seater',
@@ -152,7 +149,7 @@ export const INITIAL_VEHICLES = [
       audio: 'Bose Surround Sound System',
       keys: '2 Original Keys + Smart Card',
       serviceRecords: 'Official Porsche Centre Records Up-to-Date',
-      district: 'Colombo', city: 'Colombo 07', conditionGrade: 'A',
+      district: 'Colombo', city: 'Colombo 07', mapLat: 6.9061, mapLng: 79.8996, conditionGrade: 'A', contactMode: 'direct',
       noDamage: true, damageZones: [],
       videoUrl: 'https://example.com/walkaround/veh-002',
       odometerPhotoUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
@@ -163,7 +160,6 @@ export const INITIAL_VEHICLES = [
       { id: 'bid-21', bidder: 'Verified Bidder #331', amount: 125000, time: '11 mins ago', isWinning: false },
       { id: 'bid-20', bidder: 'Verified Bidder #990', amount: 123000, time: '25 mins ago', isWinning: false }
     ],
-    savingsVsMiddleman: 8500,
     viewsCount: 3120
   },
   {
@@ -204,7 +200,7 @@ export const INITIAL_VEHICLES = [
       ownershipType: '1st Registered Owner',
       revenueLicenseValidUntil: '2027-01-15',
       financeEmbargo: 'None (Clean Title)',
-      noOpenPapersDeclarationSigned: true,
+      cleanTitleDeclarationSigned: true,
       inspectionScore: 94,
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
@@ -216,8 +212,7 @@ export const INITIAL_VEHICLES = [
       fullPhone: '+94 70 219 4439',
       memberSince: 'June 2024',
       rating: 4.8,
-      directSellerConfirmed: true,
-      brokerFlagScore: 0
+      directSellerConfirmed: true
     },
     specs: {
       seating: '5 Seater',
@@ -226,13 +221,12 @@ export const INITIAL_VEHICLES = [
       audio: 'Burmester 3D Surround',
       keys: '2 Keys',
       serviceRecords: 'Complete DIMO Service History',
-      district: 'Kandy', city: 'Kandy', conditionGrade: 'B',
+      district: 'Kandy', city: 'Kandy', mapLat: 7.2906, mapLng: 80.6337, conditionGrade: 'B', contactMode: 'assisted',
       noDamage: false, damageZones: ['lf-door'],
       videoUrl: null,
       odometerPhotoUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ratingSum: 40, ratingCount: 9
     },
-    savingsVsMiddleman: 3200,
     viewsCount: 1890
   },
   {
@@ -278,7 +272,7 @@ export const INITIAL_VEHICLES = [
       ownershipType: '1st Owner',
       revenueLicenseValidUntil: '2027-08-30',
       financeEmbargo: 'None',
-      noOpenPapersDeclarationSigned: true,
+      cleanTitleDeclarationSigned: true,
       inspectionScore: 98,
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
@@ -290,8 +284,7 @@ export const INITIAL_VEHICLES = [
       fullPhone: '+94 77 910 2281',
       memberSince: 'February 2025',
       rating: 4.9,
-      directSellerConfirmed: true,
-      brokerFlagScore: 0
+      directSellerConfirmed: true
     },
     specs: {
       seating: '5 Seater',
@@ -300,7 +293,7 @@ export const INITIAL_VEHICLES = [
       audio: 'Bose Sound',
       keys: '2 Keys + Digital Key Card',
       serviceRecords: '100% Agent records, Battery SOH 99%',
-      district: 'Gampaha', city: 'Negombo', conditionGrade: 'A',
+      district: 'Gampaha', city: 'Negombo', mapLat: 7.2083, mapLng: 79.8358, conditionGrade: 'A', contactMode: 'direct',
       noDamage: true, damageZones: [],
       videoUrl: 'https://example.com/walkaround/veh-004',
       odometerPhotoUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
@@ -310,7 +303,6 @@ export const INITIAL_VEHICLES = [
       { id: 'bid-9', bidder: 'Verified Bidder #552', amount: 47200, time: '1 hour ago', isWinning: true },
       { id: 'bid-8', bidder: 'Verified Bidder #119', amount: 46000, time: '3 hours ago', isWinning: false }
     ],
-    savingsVsMiddleman: 3500,
     viewsCount: 2240
   },
   {
@@ -356,7 +348,7 @@ export const INITIAL_VEHICLES = [
       ownershipType: '2nd Registered Owner (Transferred in 2022 legally)',
       revenueLicenseValidUntil: '2027-03-31',
       financeEmbargo: 'None',
-      noOpenPapersDeclarationSigned: true,
+      cleanTitleDeclarationSigned: true,
       inspectionScore: 92,
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
@@ -368,8 +360,7 @@ export const INITIAL_VEHICLES = [
       fullPhone: '+94 76 551 8855',
       memberSince: 'May 2024',
       rating: 4.7,
-      directSellerConfirmed: true,
-      brokerFlagScore: 0
+      directSellerConfirmed: true
     },
     specs: {
       seating: '5 Seater',
@@ -378,7 +369,7 @@ export const INITIAL_VEHICLES = [
       audio: 'Honda Display Audio with Apple CarPlay',
       keys: '2 Smart Keys',
       serviceRecords: 'Stafford Motors Service Records',
-      district: 'Galle', city: 'Galle', conditionGrade: 'B',
+      district: 'Galle', city: 'Galle', mapLat: 6.0535, mapLng: 80.2210, conditionGrade: 'B', contactMode: 'assisted',
       noDamage: false, damageZones: ['rear-bumper'],
       videoUrl: null,
       odometerPhotoUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
@@ -388,7 +379,6 @@ export const INITIAL_VEHICLES = [
       { id: 'bid-7', bidder: 'Verified Bidder #204', amount: 30500, time: '25 mins ago', isWinning: true },
       { id: 'bid-6', bidder: 'Verified Bidder #811', amount: 29500, time: '1 hour ago', isWinning: false }
     ],
-    savingsVsMiddleman: 2100,
     viewsCount: 1650
   },
   // Item pending Admin Verification (Shows the Audit Workflow in Admin Portal!)
@@ -434,7 +424,7 @@ export const INITIAL_VEHICLES = [
       ownershipType: '1st Registered Owner',
       revenueLicenseValidUntil: '2027-05-31',
       financeEmbargo: 'Commercial Bank Lease (Lease settlement letter attached)',
-      noOpenPapersDeclarationSigned: true,
+      cleanTitleDeclarationSigned: true,
       inspectionScore: null,
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
@@ -446,8 +436,7 @@ export const INITIAL_VEHICLES = [
       fullPhone: '+94 71 440 9941',
       memberSince: 'September 2026',
       rating: 4.5,
-      directSellerConfirmed: true,
-      brokerFlagScore: 5 // minor alert to check lease clearance
+      directSellerConfirmed: true
     },
     specs: {
       seating: '5 Seater',
@@ -456,17 +445,16 @@ export const INITIAL_VEHICLES = [
       audio: 'Android Auto & Carplay',
       keys: '2 Smart Keys',
       serviceRecords: 'AMW agent records',
-      district: 'Kurunegala', city: 'Kurunegala', conditionGrade: 'C',
+      district: 'Kurunegala', city: 'Kurunegala', mapLat: 7.4863, mapLng: 80.3623, conditionGrade: 'C', contactMode: 'direct',
       noDamage: false, damageZones: ['hood'],
       videoUrl: null,
       odometerPhotoUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ratingSum: 0, ratingCount: 0
     },
     bids: [],
-    savingsVsMiddleman: 1500,
     viewsCount: 140
   },
-  // Flagged Middleman Listing Attempt (For Admin Middleman Radar Demo)
+  // Rejected Listing Attempt (failed title audit — demo of the rejection workflow)
   {
     id: 'veh-007',
     title: '2019 Toyota Aqua G Soft Leather Selection',
@@ -482,7 +470,7 @@ export const INITIAL_VEHICLES = [
     interiorColor: 'Black Soft Leather',
     listingType: 'direct',
     directPrice: 22000,
-    status: 'flagged_middleman', // SUSPECTED BROKER / OPEN PAPERS!
+    status: 'rejected', // FAILED TITLE AUDIT — registered-owner mismatch
     featured: false,
     location: 'Dehiwala / Western Province',
     licensePlate: 'CAD-3129',
@@ -492,30 +480,29 @@ export const INITIAL_VEHICLES = [
     ],
     verification: {
       status: 'rejected',
-      badge: 'FLAGGED: Suspicious Open Paper / Broker Submission',
+      badge: 'REJECTED: Title Audit Failed — Owner Name Mismatch',
       submittedAt: '2026-09-05T18:00:00Z',
       registrationDocNumber: 'CR-1192834-WP',
       chassisNumber: 'NHP10-2194821',
       engineNumber: '1NZ-FXE-8812',
       registeredOwnerName: 'Sunil Weerasinghe (CR Name)',
-      ownerIdNumber: 'NIC mismatch: Submitter is "Ranjan Car Brokers"',
-      ownershipType: 'Open Paper / Blank MTA Forms Found',
+      ownerIdNumber: 'NIC mismatch — submitter ID does not match the CR',
+      ownershipType: 'No legal transfer deed on file (blank forms only)',
       revenueLicenseValidUntil: '2025-10-31 (EXPIRED)',
       financeEmbargo: 'Unknown / Undisclosed',
-      noOpenPapersDeclarationSigned: false,
-      rejectionReason: 'Seller name does not match CR Registered Owner. Open paper transfer detected without legal transfer deed. Middleman multiple listing alert triggered.',
+      cleanTitleDeclarationSigned: false,
+      rejectionReason: 'Seller name does not match CR Registered Owner. No legal transfer deed — ownership cannot be proven, so the listing was rejected under the Clean Title Only policy.',
       titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
       ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
     },
     seller: {
       id: 'sel-999',
-      name: 'Ranjan Deals (Unverified Broker)',
+      name: 'Ranjan Deals (Unverified)',
       maskedPhone: '+94 77 ••• ••00',
       fullPhone: '+94 77 999 0000',
       memberSince: 'September 2026',
       rating: 1.2,
-      directSellerConfirmed: false,
-      brokerFlagScore: 95 // HIGH BROKER ALERT!
+      directSellerConfirmed: false
     },
     specs: {
       seating: '5 Seater',
@@ -526,7 +513,6 @@ export const INITIAL_VEHICLES = [
       serviceRecords: 'Missing records'
     },
     bids: [],
-    savingsVsMiddleman: 0,
     viewsCount: 65
   }
 ];
@@ -541,8 +527,8 @@ export const INITIAL_TELEMETRY = {
   totalAuctionsHeld: 142,
   successfulAuctionsRatio: '91.4%',
   averageTimeOnSite: '6m 42s',
-  totalBuyerSavings: 'Rs 98,550,000', // Total saved vs traditional middlemen!
-  openPapersRejectedCount: 38, // Number of open paper frauds stopped by VSS!
+  totalBuyerSavings: 'Rs 98,550,000', // Total saved through direct buyer–seller settlement
+  cleanTitleRejectedCount: 38, // Listings stopped by the Clean Title audit
   activeRegisteredBidders: 1840,
   
   // Weekly Traffic Breakdown
@@ -569,7 +555,7 @@ export const INITIAL_TELEMETRY = {
     { keyword: 'Toyota Land Cruiser Prado TX-L', count: 1840, change: '+18%' },
     { keyword: 'Clean title hybrid under Rs 9M', count: 1420, change: '+29%' },
     { keyword: 'Direct owner Mercedes C200', count: 980, change: '+12%' },
-    { keyword: 'No open papers electric SUV', count: 850, change: '+44%' },
+    { keyword: 'Clean title electric SUV', count: 850, change: '+44%' },
     { keyword: 'Honda Civic RS Hatchback', count: 760, change: '+8%' }
   ],
 

@@ -190,16 +190,17 @@ export const AppProvider = ({ children }) => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // ------------------------------------------------------------------
-  // Visual theme. Two skins ship with the app:
+  // Visual theme. Three skins ship with the app:
   //   'nikoba'   — light, white + indigo marketplace look (default)
   //   'vss-dark' — the original dark glassmorphism UI (2nd option)
+  //   'racing'   — carbon-black + racing-red motorsport look (3rd option)
   // The choice is persisted and mirrored onto <html data-theme="..."> so the
   // whole CSS-variable design system re-skins without touching components.
   // ------------------------------------------------------------------
   const [theme, setTheme] = useState(() => {
     try {
       const saved = localStorage.getItem('vss_theme');
-      return saved === 'vss-dark' || saved === 'nikoba' ? saved : 'nikoba';
+      return saved === 'vss-dark' || saved === 'racing' || saved === 'nikoba' ? saved : 'nikoba';
     } catch (e) {
       return 'nikoba';
     }
@@ -210,7 +211,8 @@ export const AppProvider = ({ children }) => {
     try { localStorage.setItem('vss_theme', theme); } catch (e) {}
   }, [theme]);
 
-  const toggleTheme = () => setTheme(t => (t === 'nikoba' ? 'vss-dark' : 'nikoba'));
+  // Cycle order matches the header switcher: light → dark → racing → light.
+  const toggleTheme = () => setTheme(t => (t === 'nikoba' ? 'vss-dark' : t === 'vss-dark' ? 'racing' : 'nikoba'));
 
   // Active role is derived from the validated user above so the two can never
   // disagree in the offline path; in DB mode the auth effect sets both.
@@ -233,6 +235,13 @@ export const AppProvider = ({ children }) => {
   const [selectedBodyType, setSelectedBodyType] = useState('all');
   const [selectedListingType, setSelectedListingType] = useState('all');
   const [onlyVerified, setOnlyVerified] = useState(true);
+  // Location narrowing — district is the primary pool; the city list is
+  // derived from the live catalogue and re-filtered by the chosen district.
+  const [selectedDistrict, setSelectedDistrict] = useState('all');
+  const [selectedCity, setSelectedCity] = useState('all');
+  // Budget band ('all' | 'u10' | 'b1020' | 'b2040' | 'o40') — driven by the
+  // one-tap facet chips above the grid (LankaPropertyWeb-style).
+  const [selectedPriceBand, setSelectedPriceBand] = useState('all');
 
   const addToast = (message, type = 'info') => {
     const id = Date.now() + Math.random();
@@ -240,6 +249,53 @@ export const AppProvider = ({ children }) => {
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 4500);
+  };
+
+  // ------------------------------------------------------------------
+  // VSS-assisted contact routing. Listings with specs.contactMode ===
+  // 'assisted' take the FIRST CALL through the platform: the buyer asks
+  // for a callback here and a VSS agent coordinates with the seller.
+  // 'direct' listings keep the classic seller-phone flow. The queue is
+  // browser-persisted (demo mode); in DB mode a future inquiries table
+  // would replace localStorage without touching this API surface.
+  // ------------------------------------------------------------------
+  const [inquiries, setInquiries] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('vss_inquiries'));
+      return Array.isArray(saved) ? saved : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  const persistInquiries = (next) => {
+    setInquiries(next);
+    try { localStorage.setItem('vss_inquiries', JSON.stringify(next)); } catch (e) {}
+  };
+
+  const addInquiry = ({ vehicleId, vehicleTitle, buyerName, buyerPhone, note }) => {
+    if (!buyerName || !buyerName.trim() || !buyerPhone || !buyerPhone.trim()) {
+      addToast('Please provide your name and phone number for the callback.', 'error');
+      return false;
+    }
+    const next = [{
+      id: `inq-${Date.now()}`,
+      vehicleId,
+      vehicleTitle: vehicleTitle || '',
+      buyerName: buyerName.trim(),
+      buyerPhone: buyerPhone.trim(),
+      note: (note || '').trim(),
+      status: 'new', // 'new' | 'contacted' | 'connected' | 'closed'
+      createdAt: new Date().toISOString()
+    }, ...inquiries];
+    persistInquiries(next);
+    addToast('Request received — a VSS agent will call you first and coordinate with the seller.', 'success');
+    return true;
+  };
+
+  const updateInquiryStatus = (id, status) => {
+    persistInquiries(inquiries.map(i => (i.id === id ? { ...i, status } : i)));
+    addToast(`Inquiry marked ${status}.`, 'info');
   };
 
   // ------------------------------------------------------------------
@@ -918,14 +974,13 @@ export const AppProvider = ({ children }) => {
         bidCount: 0,
         currentBid: basePrice,
         isReserveMet: false,
-        savingsVsMiddleman: Math.round((basePrice || 30000) * 0.07),
         status: 'pending_verification',
         ...newVehData,
         verification: {
           status: 'pending',
-          badge: 'Verification In Progress (No Open Papers Audit)',
+          badge: 'Verification In Progress (Clean Title Audit)',
           submittedAt: new Date().toISOString(),
-          noOpenPapersDeclarationSigned: true,
+          cleanTitleDeclarationSigned: true,
           ...(newVehData.verification || {})
         }
       };
@@ -945,14 +1000,13 @@ export const AppProvider = ({ children }) => {
       viewsCount: 1, bidCount: 0, bids: [],
       currentBid: newVehData.startingPrice || newVehData.directPrice,
       isReserveMet: false,
-      savingsVsMiddleman: Math.round((newVehData.startingPrice || newVehData.directPrice || 30000) * 0.07),
       status: 'pending_verification',
       ...newVehData,
       verification: {
         status: 'pending',
-        badge: 'Verification In Progress (No Open Papers Audit)',
+        badge: 'Verification In Progress (Clean Title Audit)',
         submittedAt: new Date().toISOString(),
-        noOpenPapersDeclarationSigned: true,
+        cleanTitleDeclarationSigned: true,
         ...newVehData.verification
       }
     };
@@ -1004,11 +1058,11 @@ export const AppProvider = ({ children }) => {
           verification: {
             ...veh.verification,
             status: 'rejected',
-            badge: 'REJECTED: Open Papers / Title Audit Failed',
-            rejectionReason: reason || 'Document name does not match seller identity. Open papers suspected.'
+            badge: 'REJECTED: Clean Title Audit Failed',
+            rejectionReason: reason || 'Document name does not match seller identity. Registered-owner verification failed.'
           }
         });
-        addToast('🚫 Vehicle rejected under No Open Papers Policy.', 'error');
+        addToast('🚫 Vehicle rejected under the Clean Title Only policy.', 'error');
       } catch (e) { addToast('Action failed: ' + e.message, 'error'); }
       return;
     }
@@ -1018,36 +1072,13 @@ export const AppProvider = ({ children }) => {
         ...veh, status: 'rejected',
         verification: {
           ...veh.verification, status: 'rejected',
-          badge: 'REJECTED: Open Papers / Title Audit Failed',
-          rejectionReason: reason || 'Document name does not match seller identity. Open papers suspected.'
+          badge: 'REJECTED: Clean Title Audit Failed',
+          rejectionReason: reason || 'Document name does not match seller identity. Registered-owner verification failed.'
         }
       };
     }));
-    setTelemetry(prev => ({ ...prev, openPapersRejectedCount: (prev.openPapersRejectedCount || 0) + 1 }));
-    addToast('🚫 Vehicle rejected under No Open Papers Policy.', 'error');
-  };
-
-  const flagMiddleman = async (vehicleId) => {
-    if (dbEnabled && supabase) {
-      const veh = vehicles.find(v => v.id === vehicleId);
-      if (!veh) return;
-      try {
-        await api.updateListing(supabase, vehicleId, {
-          status: 'flagged_middleman',
-          seller: { ...veh.seller, directSellerConfirmed: false, brokerFlagScore: 98 }
-        });
-        addToast('⚠️ Middleman flagged and removed from peer-to-peer directory.', 'warning');
-      } catch (e) { addToast('Action failed: ' + e.message, 'error'); }
-      return;
-    }
-    setVehicles(prev => prev.map(veh => {
-      if (veh.id !== vehicleId) return veh;
-      return {
-        ...veh, status: 'flagged_middleman',
-        seller: { ...veh.seller, directSellerConfirmed: false, brokerFlagScore: 98 }
-      };
-    }));
-    addToast('⚠️ Middleman flagged and removed from peer-to-peer directory.', 'warning');
+    setTelemetry(prev => ({ ...prev, cleanTitleRejectedCount: (prev.cleanTitleRejectedCount || 0) + 1 }));
+    addToast('🚫 Vehicle rejected under the Clean Title Only policy.', 'error');
   };
 
   const togglePlateMasking = async (vehicleId) => {
@@ -1135,7 +1166,6 @@ export const AppProvider = ({ children }) => {
         addVehicle,
         approveVehicle,
         rejectVehicle,
-        flagMiddleman,
         togglePlateMasking,
         rateVehicle,
         // Authentication & access control
@@ -1174,7 +1204,16 @@ export const AppProvider = ({ children }) => {
         selectedListingType,
         setSelectedListingType,
         onlyVerified,
-        setOnlyVerified
+        setOnlyVerified,
+        selectedDistrict,
+        setSelectedDistrict,
+        selectedCity,
+        setSelectedCity,
+        selectedPriceBand,
+        setSelectedPriceBand,
+        inquiries,
+        addInquiry,
+        updateInquiryStatus
       }}
     >
       {children}

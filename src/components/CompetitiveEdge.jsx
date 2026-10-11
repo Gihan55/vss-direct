@@ -3,15 +3,15 @@ import { AlertTriangle, ShieldCheck } from 'lucide-react';
 
 // Competitive analysis: where the alternative / legacy ways of buying &
 // selling used cars fall short, paired with the VSS control that closes each
-// gap. This is factual positioning, not a "no broker fee" sales pitch.
+// gap. This is factual positioning, not a fee-related sales pitch.
 const COMPARISONS = [
   {
-    weakness: 'Chain-of-broker markups',
-    detail: 'Listings passed through informal brokers and dealers get 5–12% added at every hop, so buyers overpay while the true owner receives less.',
+    weakness: 'Multi-layer reseller markups',
+    detail: 'Listings passed through informal chains of dealers and re-sellers get 5–12% added at every hop, so buyers overpay while the true owner receives less.',
     vss: 'One verified registered owner lists directly; the price you see is the owner’s price.',
   },
   {
-    weakness: 'Open-paper (blank MTA) fraud',
+    weakness: 'Incomplete title-transfer fraud',
     detail: 'Vehicles sold on blank signed transfer forms never change legal ownership — the buyer inherits fines, liabilities and a car they cannot prove is theirs.',
     vss: 'Every listing is audited against the Certificate of Registration and the owner’s government ID before it can go live.',
   },
@@ -33,7 +33,7 @@ const COMPARISONS = [
   {
     weakness: 'No seller identity check',
     detail: 'Anyone can post any car; impersonation of the registered owner is common and unchecked.',
-    vss: 'Seller identity is cross-verified against the CR name, and middleman patterns are flagged automatically.',
+    vss: 'Seller identity is cross-verified against the CR name before a listing can go live, so the person selling is the person registered.',
   },
 ];
 
@@ -48,7 +48,7 @@ export const CompetitiveEdge = () => (
         Where the old way of buying a car falls short
       </h2>
       <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '8px auto 0' }}>
-        We built VSS by fixing the specific failures buyers and sellers hit on broker chains and
+        We built VSS by fixing the specific failures buyers and sellers hit on dealer chains and
         open classifieds. Here is each weakness — and the control we put in its place.
       </p>
     </div>

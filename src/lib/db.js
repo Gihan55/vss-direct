@@ -36,7 +36,6 @@ const LISTING_COLUMNS = {
   location: 'location',
   licensePlate: 'license_plate',
   isPlateMasked: 'is_plate_masked',
-  savingsVsMiddleman: 'savings_vs_middleman',
 };
 
 const JSONB_FIELDS = ['verification', 'seller', 'specs'];

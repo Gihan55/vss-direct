@@ -39,16 +39,16 @@ export const HeroBanner = () => {
         <div>
           <div className="policy-badge" onClick={() => setIsPledgeModalOpen(true)} style={{ cursor: 'pointer' }}>
             <ShieldCheck size={16} />
-            <span>Strict Policy: 100% Direct Owner • Zero Open Papers</span>
+            <span>Strict Policy: Direct Owner Verified • Clean Title Only</span>
           </div>
 
           <h1 className="hero-headline">
             The Ethical Automobile Marketplace. <br />
-            <span className="highlight-cyan">Zero Middlemen. Pure Legal Title.</span>
+            <span className="highlight-cyan">Direct Owners Only. Pure Legal Title.</span>
           </h1>
 
           <p className="hero-subhead">
-            Eliminating open-paper curbstoners and parasitic car-sale markups. We verify the registered owner's 
+            Eliminating unverified resellers and hidden car-sale markups. We verify the registered owner's 
             Certificate of Registration (CR) directly against their government ID. Real market-clearing prices, 
             protected seller privacy, and transparent live bidding.
           </p>

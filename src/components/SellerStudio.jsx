@@ -30,6 +30,8 @@ export const SellerStudio = () => {
     interiorColor: 'Black Leather',
     district: 'Colombo',
     city: 'Colombo 07',
+    mapLat: '',
+    mapLng: '',
     conditionGrade: 'B',
     damageZones: [],
     noDamage: false,
@@ -37,6 +39,7 @@ export const SellerStudio = () => {
     odometerPhotoUrl: '',
     licensePlate: 'CBA-7712',
     isPlateMasked: true,
+    contactMode: 'assisted', // 'assisted' = VSS takes the first call | 'direct' = buyer calls seller
     listingType: 'auction', // 'auction' | 'direct'
     startingPrice: 10500000,
     reservePrice: 11700000,
@@ -65,7 +68,7 @@ export const SellerStudio = () => {
   const handleFinalSubmit = (e) => {
     e.preventDefault();
     if (!formData.pledgeAccepted) {
-      alert('You must accept the No Open Papers Legal Undertaking to list on VSS.');
+      alert('You must accept the Clean Title Legal Undertaking to list on VSS.');
       return;
     }
 
@@ -105,6 +108,14 @@ export const SellerStudio = () => {
       alert('Please select the vehicle district and city.');
       return;
     }
+    // Map pin is optional, but a half-entered coordinate would break the embed.
+    if ((formData.mapLat.trim() !== '' || formData.mapLng.trim() !== '') &&
+        (formData.mapLat.trim() === '' || formData.mapLng.trim() === '' ||
+         Math.abs(Number(formData.mapLat)) > 90 || Math.abs(Number(formData.mapLng)) > 180 ||
+         isNaN(Number(formData.mapLat)) || isNaN(Number(formData.mapLng)))) {
+      alert('Please enter both map coordinates (latitude and longitude) as valid numbers, or leave both blank.');
+      return;
+    }
 
     addVehicle({
       title: titleStr,
@@ -139,8 +150,7 @@ export const SellerStudio = () => {
         fullPhone: '+94 77 123 4567',
         memberSince: 'Today',
         rating: 5.0,
-        directSellerConfirmed: true,
-        brokerFlagScore: 0
+        directSellerConfirmed: true
       },
       verification: {
         status: 'pending',
@@ -154,7 +164,7 @@ export const SellerStudio = () => {
         ownershipType: '1st Registered Owner',
         revenueLicenseValidUntil: '2027-12-31',
         financeEmbargo: 'None (Clean Title Declared)',
-        noOpenPapersDeclarationSigned: true,
+        cleanTitleDeclarationSigned: true,
         titleCertDocUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=800&q=80',
         ownerIdDocUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80'
       },
@@ -169,9 +179,12 @@ export const SellerStudio = () => {
         // both the offline demo and the Supabase backend persist them.
         district: formData.district,
         city: formData.city,
+        mapLat: formData.mapLat.trim() ? Number(formData.mapLat) : null,
+        mapLng: formData.mapLng.trim() ? Number(formData.mapLng) : null,
         conditionGrade: formData.conditionGrade,
         damageZones: formData.damageZones,
         noDamage: formData.noDamage,
+        contactMode: formData.contactMode,
         videoUrl: formData.videoUrl || null,
         odometerPhotoUrl: formData.odometerPhotoUrl
       }
@@ -210,7 +223,7 @@ export const SellerStudio = () => {
           </div>
           <h2 style={{ fontSize: '2.4rem', marginTop: '8px' }}>Sell Your Vehicle Directly</h2>
           <p style={{ color: 'var(--text-secondary)', marginTop: '6px' }}>
-            Zero middleman deductions. Your vehicle will be certified with our "No Open Papers" trust seal.
+            No third-party deductions — you set and keep your price. Your vehicle will be certified with our "Clean Title Only" trust seal.
           </p>
         </div>
 
@@ -339,6 +352,30 @@ export const SellerStudio = () => {
                 <select className="form-input" value={formData.city} onChange={e => handleChange('city', e.target.value)}>
                   {cityPoolFor(formData.district).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
+              </div>
+
+              {/* Exact viewing spot — buyers see a Google Map pin in the listing */}
+              <div className="form-group">
+                <label className="form-label">Vehicle Spot on Google Maps (optional)</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="number"
+                    step="0.000001"
+                    className="form-input"
+                    placeholder="Latitude (e.g. 6.9271)"
+                    value={formData.mapLat}
+                    onChange={e => handleChange('mapLat', e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    step="0.000001"
+                    className="form-input"
+                    placeholder="Longitude (e.g. 79.8612)"
+                    value={formData.mapLng}
+                    onChange={e => handleChange('mapLng', e.target.value)}
+                  />
+                </div>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Open Google Maps, right-click the exact parking spot, copy the two numbers shown. Buyers see a pinned map on the listing.</span>
               </div>
 
               <div className="form-group">
@@ -581,7 +618,7 @@ export const SellerStudio = () => {
           </div>
         )}
 
-        {/* Step 3: Title & No Open Papers Verification */}
+        {/* Step 3: Clean Title Verification */}
         {step === 3 && (
           <div className="glass-panel" style={{ padding: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
@@ -589,7 +626,7 @@ export const SellerStudio = () => {
                 <ShieldCheck size={24} />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.3rem' }}>Step 3: "No Open Papers" Title Audit</h3>
+                <h3 style={{ fontSize: '1.3rem' }}>Step 3: Clean Title Verification</h3>
                 <p style={{ fontSize: '0.8rem', color: 'var(--accent-green)' }}>
                   Our legal team will verify these documents before granting your listing the gold Trust Seal.
                 </p>
@@ -679,12 +716,12 @@ export const SellerStudio = () => {
                   style={{ width: '18px', height: '18px', marginTop: '3px', accentColor: 'var(--accent-green)', cursor: 'pointer' }}
                 />
                 <div style={{ fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--text-primary)' }}>
-                  <strong>Mandatory Legal Undertaking (No Open Papers):</strong>
+                  <strong>Mandatory Legal Undertaking (Clean Title Only):</strong>
                   <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>
                     I solemnly declare that I am the legal registered owner / certified legal attorney of this vehicle. 
-                    I affirm this vehicle has <strong>NOT</strong> been sold on open papers (blank signed forms) to any 
-                    intermediary, and I commit to executing the legal registration transfer deed directly into the name 
-                    of the buyer upon settlement.
+                    I affirm the vehicle's ownership was transferred into my name through a fully executed legal deed 
+                    (no blank or unsigned transfer forms), and I commit to executing the legal registration transfer deed 
+                    directly into the name of the buyer upon settlement.
                   </p>
                 </div>
               </label>
@@ -703,7 +740,7 @@ export const SellerStudio = () => {
                     return;
                   }
                   if (!formData.pledgeAccepted) {
-                    alert('Please accept the No Open Papers legal declaration.');
+                    alert('Please accept the Clean Title legal declaration.');
                     return;
                   }
                   setStep(4);
@@ -744,11 +781,49 @@ export const SellerStudio = () => {
 
                 <div style={{ height: '1px', background: 'var(--border-subtle)' }}></div>
 
+                {/* Contact routing — mixed model: assisted (first call to us) or direct */}
+                <div>
+                  <strong style={{ fontSize: '0.9rem', display: 'block', marginBottom: '4px' }}>Buyer Contact Routing</strong>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginBottom: '10px' }}>
+                    Choose whether VSS takes the first call like a reliable digital agent, or buyers reach you directly.
+                  </span>
+                  <div className="contact-routing-cards">
+                    <label className={`contact-route-card ${formData.contactMode === 'assisted' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="contactMode"
+                        value="assisted"
+                        checked={formData.contactMode === 'assisted'}
+                        onChange={() => handleChange('contactMode', 'assisted')}
+                      />
+                      <div>
+                        <strong>VSS Assisted <span className="assisted-badge">Recommended</span></strong>
+                        <span>Buyers request a callback and a VSS agent calls them first, screens the enquiry, then connects you. Your number stays private until you approve.</span>
+                      </div>
+                    </label>
+                    <label className={`contact-route-card ${formData.contactMode === 'direct' ? 'active' : ''}`}>
+                      <input
+                        type="radio"
+                        name="contactMode"
+                        value="direct"
+                        checked={formData.contactMode === 'direct'}
+                        onChange={() => handleChange('contactMode', 'direct')}
+                      />
+                      <div>
+                        <strong>Direct Contact</strong>
+                        <span>Serious buyers reach your shielded phone straight away (released to verified bidders / accepted offer buyers).</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div style={{ height: '1px', background: 'var(--border-subtle)' }}></div>
+
                 <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <strong style={{ fontSize: '0.9rem', display: 'block' }}>Shield Telephone & Personal Address</strong>
                     <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      Your phone number is locked against cold-calling car brokers. Only released to verified auction winners or accepted buyers.
+                      Your phone number is locked against cold-calling resellers and spam. Only released to verified auction winners or accepted buyers.
                     </span>
                   </div>
                   <span style={{ fontSize: '0.75rem', color: 'var(--accent-green)', fontWeight: 700 }}>
@@ -764,6 +839,7 @@ export const SellerStudio = () => {
               <div className="r-cols-2" style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', gap: '8px' }}>
                 <div>Vehicle: <strong>{formData.year} {formData.make} {formData.model}</strong></div>
                 <div>Format: <strong>{formData.listingType === 'auction' ? 'Live Auction' : 'Direct Sale'}</strong></div>
+                <div>Contact: <strong>{formData.contactMode === 'assisted' ? 'VSS Assisted (we take the first call)' : 'Direct to seller'}</strong></div>
                 <div>Registered Owner: <strong>{formData.registeredOwnerName}</strong></div>
                 <div>CR Number: <strong>{formData.registrationDocNumber}</strong></div>
               </div>
